@@ -27,7 +27,7 @@ export class TeamsService {
     private readonly uploadService: UploadService,
   ) {}
 
-  // ─── Create ───────────────────────────────────────────────────
+  // Create
   async create(
     dto: CreateTeamDto,
     currentUser: RequestUser,
@@ -110,14 +110,14 @@ export class TeamsService {
     });
 
     this.logger.log(
-      `✅ Team created: "${team.name}" [${team.abbreviation}] ` +
+      `Team created: "${team.name}" [${team.abbreviation}] ` +
         `(${team.sport} / ${team.season}) by ${currentUser.email}`,
     );
 
     return team;
   }
 
-  // ─── Find All ─────────────────────────────────────────────────
+  // Find All
   async findAll(
     page = 1,
     limit = 10,
@@ -182,7 +182,7 @@ export class TeamsService {
     };
   }
 
-  // ─── Find One ─────────────────────────────────────────────────
+  // Find One
   async findOne(id: string, currentUser: RequestUser): Promise<TeamDocument> {
     const team = await this.teamsRepository.findById(id);
     if (!team) throw new NotFoundException(`Team ${id} not found`);
@@ -190,7 +190,7 @@ export class TeamsService {
     return team;
   }
 
-  // ─── Update ───────────────────────────────────────────────────
+  // Update
   async update(
     id: string,
     dto: UpdateTeamDto,
@@ -279,7 +279,7 @@ export class TeamsService {
     return updated!;
   }
 
-  // ─── Remove Logo ──────────────────────────────────────────────
+  // Remove Logo
   async removeLogo(
     id: string,
     currentUser: RequestUser,
@@ -299,7 +299,7 @@ export class TeamsService {
     return { message: 'Team logo removed successfully' };
   }
 
-  // ─── Delete ───────────────────────────────────────────────────
+  // Delete
   async remove(
     id: string,
     currentUser: RequestUser,
@@ -318,7 +318,7 @@ export class TeamsService {
     return { message: 'Team deleted successfully' };
   }
 
-  // ─── Stats ────────────────────────────────────────────────────
+  // Stats
   async getStats(currentUser: RequestUser) {
     const filter: any = {};
 
@@ -342,7 +342,7 @@ export class TeamsService {
     return { total, active, archived };
   }
 
-  // ─── Access helpers ───────────────────────────────────────────
+  // Access helpers
   private checkAccess(team: TeamDocument, user: RequestUser): void {
     if (user.isSuperAdmin) return;
     if (user.role === UserRole.ADMIN) return;

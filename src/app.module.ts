@@ -45,14 +45,22 @@ import { MatchesModule } from './modules/matches/matches.module';
 import { LeaguesModule } from './modules/leagues/leagues.module';
 import { DivisionsModule } from './modules/divisions/divisions.module';
 import { ClubsModule } from './modules/clubs/clubs.module';
+import redisConfig from './config/redis.config';
+import { AppRedisModule } from './modules/redis/redis.module';
+import { TournamentsModule } from './modules/tournaments/tournaments.module';
 
 @Module({
   imports: [
-    // ─── Config with Joi validation ───────────────────────────
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
-      load: [databaseConfig, throttlerConfig, securityConfig, appConfig],
+      load: [
+        databaseConfig,
+        throttlerConfig,
+        securityConfig,
+        appConfig,
+        redisConfig,
+      ],
       validationSchema: configValidationSchema,
       validationOptions: {
         abortEarly: false,
@@ -60,7 +68,6 @@ import { ClubsModule } from './modules/clubs/clubs.module';
       },
     }),
 
-    // ─── MongoDB ──────────────────────────────────────────────
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (cs: ConfigService) => ({
@@ -81,7 +88,7 @@ import { ClubsModule } from './modules/clubs/clubs.module';
       inject: [ConfigService],
     }),
 
-    // ─── Throttler ────────────────────────────────────────────
+    // Throttler
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (cs: ConfigService): ThrottlerModuleOptions => ({
@@ -120,7 +127,9 @@ import { ClubsModule } from './modules/clubs/clubs.module';
     DivisionsModule,
     ClubsModule,
     MatchesModule,
+    TournamentsModule,
     SeederModule,
+    AppRedisModule,
   ],
 
   controllers: [AppController],
@@ -128,13 +137,11 @@ import { ClubsModule } from './modules/clubs/clubs.module';
   providers: [
     AppService,
 
-    // ─── Global Guards ────────────────────────────────────────
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
     { provide: APP_GUARD, useClass: PermissionsGuard },
     { provide: APP_GUARD, useClass: CustomThrottlerGuard },
 
-    // ─── Global Interceptors ──────────────────────────────────
     { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
     { provide: APP_INTERCEPTOR, useClass: TimeoutInterceptor },
   ],

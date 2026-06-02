@@ -48,7 +48,6 @@ import type { RequestUser } from '../auth/interfaces/jwt-payload.interface';
 export class TeamsController {
   constructor(private readonly teamsService: TeamsService) {}
 
-  // ─── POST /teams ──────────────────────────────────────────────
   @Post()
   @RequirePermissions('teams:create')
   @HttpCode(HttpStatus.CREATED)
@@ -110,7 +109,6 @@ export class TeamsController {
     return this.teamsService.create(dto, user, logoFile);
   }
 
-  // ─── GET /teams ───────────────────────────────────────────────
   @Get()
   @RequirePermissions('teams:read')
   @ApiOperation({ summary: 'List all teams (paginated + filters)' })
@@ -154,7 +152,6 @@ export class TeamsController {
     });
   }
 
-  // ─── GET /teams/stats ─────────────────────────────────────────
   @Get('stats')
   @RequirePermissions('teams:read')
   @ApiOperation({ summary: 'Team count statistics' })
@@ -162,7 +159,6 @@ export class TeamsController {
     return this.teamsService.getStats(user);
   }
 
-  // ─── GET /teams/:id ───────────────────────────────────────────
   @Get(':id')
   @RequirePermissions('teams:read')
   @ApiOperation({ summary: 'Get a team by ID' })
@@ -172,7 +168,6 @@ export class TeamsController {
     return this.teamsService.findOne(id, user);
   }
 
-  // ─── PATCH /teams/:id ─────────────────────────────────────────
   @Patch(':id')
   @RequirePermissions('teams:update')
   @UseInterceptors(
@@ -201,7 +196,6 @@ export class TeamsController {
     return this.teamsService.update(id, dto, user, logoFile);
   }
 
-  // ─── DELETE /teams/:id/logo ───────────────────────────────────
   @Delete(':id/logo')
   @RequirePermissions('teams:update')
   @ApiOperation({ summary: 'Remove team logo' })
@@ -210,7 +204,6 @@ export class TeamsController {
     return this.teamsService.removeLogo(id, user);
   }
 
-  // ─── DELETE /teams/:id ────────────────────────────────────────
   @Delete(':id')
   @RequirePermissions('teams:delete')
   @AuditLog({

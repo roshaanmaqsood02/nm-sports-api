@@ -33,10 +33,8 @@ async function bootstrap() {
   const swaggerEnabled =
     swaggerEnabledRaw === true || swaggerEnabledRaw === 'true';
 
-  // ─── Compression ──────────────────────────────────────────────
   app.use(compression());
 
-  // ─── Serve uploads as static files ───────────────────────────
   app.use(
     '/uploads',
     express.static(join(process.cwd(), uploadDest), {
@@ -45,7 +43,6 @@ async function bootstrap() {
     }),
   );
 
-  // ─── Helmet ───────────────────────────────────────────────────
   app.use(
     helmet({
       contentSecurityPolicy: false,
@@ -53,7 +50,6 @@ async function bootstrap() {
     }),
   );
 
-  // ─── CORS ─────────────────────────────────────────────────────
   app.enableCors({
     origin: isProd
       ? configService
@@ -66,11 +62,9 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // ─── Trust proxy ──────────────────────────────────────────────
   const expressApp = app.getHttpAdapter().getInstance();
   expressApp.set('trust proxy', 1);
 
-  // ─── Swagger — MUST be before setGlobalPrefix ─────────────────
   if (swaggerEnabled) {
     const docBuilder = new DocumentBuilder()
       .setTitle(configService.get<string>('SWAGGER_TITLE', 'NMSports API'))
@@ -109,6 +103,10 @@ async function bootstrap() {
       .addTag('Divisions', 'Division management under organizations')
       .addTag('Clubs', 'Club management under organizations')
       .addTag('Matches', 'Match scheduling, live scoring, events & results')
+      .addTag(
+        'Tournaments',
+        'Tournament management — bracket, standings, teams',
+      )
       .addTag('Audit', 'Audit log queries')
       .build();
 
@@ -157,7 +155,6 @@ async function bootstrap() {
     );
   }
 
-  // ─── Global prefix — AFTER Swagger ────────────────────────────
   app.setGlobalPrefix(apiPrefix, {
     exclude: [
       { path: swaggerPath, method: RequestMethod.GET },
@@ -167,7 +164,6 @@ async function bootstrap() {
     ],
   });
 
-  // ─── Global pipes ─────────────────────────────────────────────
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -178,27 +174,22 @@ async function bootstrap() {
     }),
   );
 
-  // ─── Global exception filter ──────────────────────────────────
   app.useGlobalFilters(new AllExceptionsFilter(appLogger));
 
-  // ─── Start ────────────────────────────────────────────────────
   await app.listen(port, '0.0.0.0');
 
   appLogger.log(
-    `🚀  API running  → http://localhost:${port}/${apiPrefix}`,
+    `API running  → http://localhost:${port}/${apiPrefix}`,
     'Bootstrap',
   );
+  appLogger.log(`Health check → http://localhost:${port}/health`, 'Bootstrap');
   appLogger.log(
-    `❤️   Health check → http://localhost:${port}/health`,
-    'Bootstrap',
-  );
-  appLogger.log(
-    `🌍  Environment  : ${configService.get<string>('NODE_ENV')}`,
+    `Environment  : ${configService.get<string>('NODE_ENV')}`,
     'Bootstrap',
   );
 }
 
 bootstrap().catch((err) => {
-  console.error('❌  Fatal bootstrap error:', err);
+  console.error('Fatal bootstrap error:', err);
   process.exit(1);
 });

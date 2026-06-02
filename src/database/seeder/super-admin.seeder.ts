@@ -121,7 +121,7 @@ export class SuperAdminSeeder implements OnApplicationBootstrap {
     const exists = await this.usersRepository.exists({ email });
 
     if (exists) {
-      this.logger.log('⏭️   Super admin already seeded — skipping');
+      this.logger.log('Super admin already seeded — skipping');
       return;
     }
 
@@ -141,14 +141,12 @@ export class SuperAdminSeeder implements OnApplicationBootstrap {
     });
 
     this.logger.log('═══════════════════════════════════════');
-    this.logger.log('✅  Super Admin seeded successfully');
-    this.logger.log(`📧  Email    : ${superAdmin.email}`);
-    this.logger.log(`👤  Username : ${superAdmin.username}`);
-    this.logger.log(`🔑  Password : ${password}  ← Change this!`);
-    this.logger.log(`🛡️   Role     : ${superAdmin.role}`);
-    this.logger.log(
-      `🔓  Perms    : ${ALL_PERMISSIONS.length} permissions granted`,
-    );
+    this.logger.log('Super Admin seeded successfully');
+    this.logger.log(`Email    : ${superAdmin.email}`);
+    this.logger.log(`Username : ${superAdmin.username}`);
+    this.logger.log(`Password : ${password}  ← Change this!`);
+    this.logger.log(`Role     : ${superAdmin.role}`);
+    this.logger.log(`Perms    : ${ALL_PERMISSIONS.length} permissions granted`);
     this.logger.log('═══════════════════════════════════════');
   }
 }

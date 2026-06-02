@@ -55,4 +55,12 @@ export const configValidationSchema = Joi.object({
   SWAGGER_DESCRIPTION: Joi.string().default('NMSports SaaS API'),
   SWAGGER_VERSION: Joi.string().default('1.0'),
   SWAGGER_PATH: Joi.string().default('api/docs'),
+
+  REDIS_HOST: Joi.string().default('localhost'),
+  REDIS_PORT: Joi.number().default(6379),
+  REDIS_PASSWORD: Joi.string().allow('').default(''),
+  REDIS_DB: Joi.number().default(0),
+  REDIS_TTL: Joi.number().default(300),
+  REDIS_MAX_ITEMS: Joi.number().default(1000),
+  REDIS_ENABLED: Joi.string().valid('true', 'false').default('true'),
 });

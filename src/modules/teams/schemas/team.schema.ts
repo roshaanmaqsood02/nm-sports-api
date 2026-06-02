@@ -5,7 +5,6 @@ import { TeamStatus, TeamGender, TeamType } from '../enums/team.enum';
 
 export type TeamDocument = Team & Document;
 
-// ─── Embedded: Logo ───────────────────────────────────────────────────────────
 @Schema({ _id: false })
 export class TeamLogo {
   @Prop({ trim: true }) filename?: string;
@@ -16,7 +15,6 @@ export class TeamLogo {
   @Prop() height?: number;
 }
 
-// ─── Main Team Schema ─────────────────────────────────────────────────────────
 @Schema({
   timestamps: true,
   collection: 'teams',
@@ -29,8 +27,6 @@ export class TeamLogo {
   },
 })
 export class Team {
-  // ── Identity ─────────────────────────────────────────────────
-  // Full name e.g. 'Lahore Lions Cricket Club'
   @Prop({
     required: true,
     trim: true,
@@ -38,7 +34,6 @@ export class Team {
   })
   name!: string;
 
-  // Short name e.g. 'Lahore Lions'
   @Prop({
     required: true,
     trim: true,
@@ -46,7 +41,6 @@ export class Team {
   })
   shortName!: string;
 
-  // Abbreviation / code e.g. 'LLC' (max 8 chars, uppercase)
   @Prop({
     required: true,
     trim: true,
@@ -56,7 +50,6 @@ export class Team {
   })
   abbreviation!: string;
 
-  // ── Sport ────────────────────────────────────────────────────
   @Prop({
     type: String,
     enum: SportType,
@@ -65,7 +58,6 @@ export class Team {
   })
   sport!: SportType;
 
-  // ── Gender ───────────────────────────────────────────────────
   @Prop({
     type: String,
     enum: TeamGender,
@@ -73,7 +65,6 @@ export class Team {
   })
   gender!: TeamGender;
 
-  // ── Club or League ───────────────────────────────────────────
   @Prop({
     type: String,
     enum: TeamType,
@@ -82,8 +73,6 @@ export class Team {
   })
   type!: TeamType;
 
-  // ── Season ───────────────────────────────────────────────────
-  // e.g. '2024-25', '2025'
   @Prop({
     required: true,
     trim: true,
@@ -91,13 +80,11 @@ export class Team {
   })
   season!: string;
 
-  // Sub-season / phase e.g. 'Spring', 'Fall', 'Round 1', 'Group Stage'
   @Prop({
     trim: true,
   })
   subSeason?: string;
 
-  // ── Organization reference ────────────────────────────────────
   @Prop({
     type: Types.ObjectId,
     ref: 'Organization',
@@ -106,8 +93,6 @@ export class Team {
   })
   organizationId!: Types.ObjectId;
 
-  // ── Branding ─────────────────────────────────────────────────
-  // Primary brand color — hex e.g. '#1A73E8'
   @Prop({
     trim: true,
     match: [
@@ -117,7 +102,6 @@ export class Team {
   })
   primaryColor?: string;
 
-  // Secondary brand color
   @Prop({
     trim: true,
     match: [
@@ -127,11 +111,9 @@ export class Team {
   })
   secondaryColor?: string;
 
-  // ── Logo ─────────────────────────────────────────────────────
   @Prop({ type: TeamLogo })
   logo?: TeamLogo;
 
-  // ── Status ───────────────────────────────────────────────────
   @Prop({
     type: String,
     enum: TeamStatus,
@@ -140,7 +122,6 @@ export class Team {
   })
   status!: TeamStatus;
 
-  // ── Ownership ────────────────────────────────────────────────
   @Prop({
     type: Types.ObjectId,
     ref: 'User',
@@ -149,14 +130,14 @@ export class Team {
   })
   createdBy!: Types.ObjectId;
 
-  // ── Soft Delete ───────────────────────────────────────────────
+  // Soft Delete
   @Prop({ default: false }) isDeleted!: boolean;
   @Prop() deletedAt?: Date;
 }
 
 export const TeamSchema = SchemaFactory.createForClass(Team);
 
-// ─── Indexes ──────────────────────────────────────────────────────────────────
+// Indexes
 TeamSchema.index({ name: 1, organizationId: 1, isDeleted: 1 });
 TeamSchema.index({ abbreviation: 1, organizationId: 1 });
 TeamSchema.index({ organizationId: 1, sport: 1, season: 1 });
