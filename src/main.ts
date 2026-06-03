@@ -91,6 +91,7 @@ async function bootstrap() {
       .addTag('Health', 'Health check')
       .addTag('Auth', 'Authentication — login, logout, refresh')
       .addTag('Users', 'User management')
+      .addTag('Staff', 'Staff management - organization roles & permissions')
       .addTag('Roles', 'Role management')
       .addTag('Permissions', 'Permission management')
       .addTag('Organizations', 'Organization management')
@@ -106,6 +107,10 @@ async function bootstrap() {
       .addTag(
         'Tournaments',
         'Tournament management — bracket, standings, teams',
+      )
+      .addTag(
+        'Seasons',
+        'Season management — subseasons, game ID generation, seeds',
       )
       .addTag('Audit', 'Audit log queries')
       .build();

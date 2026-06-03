@@ -36,7 +36,6 @@ import { DivisionType, DivisionStatus } from './enums/division.enum';
 export class DivisionsController {
   constructor(private readonly divisionsService: DivisionsService) {}
 
-  // ─── POST /organizations/:organizationId/divisions ────────────
   @Post()
   @RequirePermissions('sports:create')
   @HttpCode(HttpStatus.CREATED)
@@ -52,7 +51,6 @@ export class DivisionsController {
     return this.divisionsService.create(dto, user);
   }
 
-  // ─── GET /organizations/:organizationId/divisions ─────────────
   @Get()
   @RequirePermissions('sports:read')
   @ApiOperation({ summary: 'List all divisions in an organization' })
@@ -79,7 +77,6 @@ export class DivisionsController {
     });
   }
 
-  // ─── GET /organizations/:organizationId/divisions/:id ─────────
   @Get(':id')
   @RequirePermissions('sports:read')
   @ApiOperation({ summary: 'Get a division by ID' })
@@ -90,7 +87,6 @@ export class DivisionsController {
     return this.divisionsService.findOne(id, user);
   }
 
-  // ─── PATCH /organizations/:organizationId/divisions/:id ───────
   @Patch(':id')
   @RequirePermissions('sports:update')
   @ApiOperation({ summary: 'Update a division' })
@@ -105,7 +101,6 @@ export class DivisionsController {
     return this.divisionsService.update(id, dto, user);
   }
 
-  // ─── DELETE /organizations/:organizationId/divisions/:id ──────
   @Delete(':id')
   @RequirePermissions('sports:delete')
   @ApiOperation({ summary: 'Delete a division' })

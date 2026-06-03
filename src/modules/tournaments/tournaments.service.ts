@@ -41,9 +41,7 @@ export class TournamentsService {
     private readonly orgsService: OrganizationsService,
   ) {}
 
-  // ══════════════════════════════════════════════════════════════
   // TOURNAMENT CRUD
-  // ══════════════════════════════════════════════════════════════
 
   async create(
     dto: CreateTournamentDto,
@@ -105,7 +103,7 @@ export class TournamentsService {
     });
 
     this.logger.log(
-      `✅ Tournament created: "${tournament.name}" by ${user.email}`,
+      `Tournament created: "${tournament.name}" by ${user.email}`,
     );
     return tournament;
   }
@@ -318,9 +316,7 @@ export class TournamentsService {
     return { message: 'Tournament deleted successfully' };
   }
 
-  // ══════════════════════════════════════════════════════════════
   // TEAM REGISTRATION
-  // ══════════════════════════════════════════════════════════════
 
   async registerTeam(
     id: string,
@@ -450,9 +446,7 @@ export class TournamentsService {
     return (await this.repo.findById(id))!;
   }
 
-  // ══════════════════════════════════════════════════════════════
   // BRACKET
-  // ══════════════════════════════════════════════════════════════
 
   async generateBracket(
     id: string,
@@ -698,9 +692,7 @@ export class TournamentsService {
     return updated;
   }
 
-  // ══════════════════════════════════════════════════════════════
   // STANDINGS
-  // ══════════════════════════════════════════════════════════════
 
   async getStandings(id: string, group?: string, user?: RequestUser) {
     const t = await this.repo.findById(id);
@@ -769,7 +761,6 @@ export class TournamentsService {
     return this.getStandings(id, undefined, user);
   }
 
-  // ── Stats ─────────────────────────────────────────────────────
   async getStats(user: RequestUser) {
     const base = user.isSuperAdmin
       ? {}
@@ -785,7 +776,6 @@ export class TournamentsService {
     return { total, active, completed, upcoming };
   }
 
-  // ── Helpers ───────────────────────────────────────────────────
   private getRoundName(totalTeams: number, matchIndex: number): BracketRound {
     if (totalTeams <= 2) return BracketRound.FINAL;
     if (totalTeams <= 4) return BracketRound.SEMI_FINAL;

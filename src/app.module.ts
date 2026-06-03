@@ -48,6 +48,8 @@ import { ClubsModule } from './modules/clubs/clubs.module';
 import redisConfig from './config/redis.config';
 import { AppRedisModule } from './modules/redis/redis.module';
 import { TournamentsModule } from './modules/tournaments/tournaments.module';
+import { SeasonsModule } from './modules/seasons/seasons.module';
+import { StaffModule } from './modules/staff/staff.module';
 
 @Module({
   imports: [
@@ -73,14 +75,12 @@ import { TournamentsModule } from './modules/tournaments/tournaments.module';
       useFactory: async (cs: ConfigService) => ({
         uri: cs.get<string>('database.uri'),
         connectionFactory: (connection) => {
-          connection.on('connected', () =>
-            console.log('✅  MongoDB connected'),
-          );
+          connection.on('connected', () => console.log('MongoDB connected'));
           connection.on('disconnected', () =>
-            console.warn('⚠️   MongoDB disconnected'),
+            console.warn('MongoDB disconnected'),
           );
           connection.on('error', (e: Error) =>
-            console.error('❌  MongoDB error:', e.message),
+            console.error('MongoDB error:', e.message),
           );
           return connection;
         },
@@ -116,6 +116,7 @@ import { TournamentsModule } from './modules/tournaments/tournaments.module';
     LoggerModule,
     UploadModule,
     UsersModule,
+    StaffModule,
     AuthModule,
     RolesModule,
     PermissionsModule,
@@ -128,6 +129,7 @@ import { TournamentsModule } from './modules/tournaments/tournaments.module';
     ClubsModule,
     MatchesModule,
     TournamentsModule,
+    SeasonsModule,
     SeederModule,
     AppRedisModule,
   ],

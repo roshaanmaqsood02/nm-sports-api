@@ -26,24 +26,22 @@ export class PlayersService {
     private readonly teamsRepository: TeamsRepository,
   ) {}
 
-  // ─── Create ───────────────────────────────────────────────────
   async create(
     dto: CreatePlayerDto,
     currentUser: RequestUser,
   ): Promise<PlayerDocument> {
-    // Verify organization
     const org = await this.orgsRepository.findById(dto.organization);
     if (!org) {
       throw new NotFoundException(`Organization ${dto.organization} not found`);
     }
     this.checkOrgAccess(org, currentUser);
 
-    // Verify team belongs to organization
     const team = await this.teamsRepository.findById(dto.team);
     if (!team) {
       throw new NotFoundException(`Team ${dto.team} not found`);
     }
-    if (team.organizationId.toString() !== dto.organization) {
+
+    if (!team.organizationId.equals(new Types.ObjectId(dto.organization))) {
       throw new BadRequestException(
         'Team does not belong to the specified organization',
       );
@@ -61,13 +59,10 @@ export class PlayersService {
       createdBy: currentUser._id as any,
     });
 
-    this.logger.log(
-      `✅ Player created: ${player.name} by ${currentUser.email}`,
-    );
+    this.logger.log(`Player created: ${player.name} by ${currentUser.email}`);
     return player;
   }
 
-  // ─── Find All (paginated + filters) ──────────────────────────
   async findAll(
     page = 1,
     limit = 10,
@@ -125,7 +120,6 @@ export class PlayersService {
     };
   }
 
-  // ─── Find One ─────────────────────────────────────────────────
   async findOne(id: string, currentUser: RequestUser): Promise<PlayerDocument> {
     const player = await this.playersRepository.findById(id);
     if (!player) throw new NotFoundException(`Player ${id} not found`);
@@ -133,7 +127,6 @@ export class PlayersService {
     return player;
   }
 
-  // ─── Update ───────────────────────────────────────────────────
   async update(
     id: string,
     dto: UpdatePlayerDto,
@@ -164,12 +157,19 @@ export class PlayersService {
       payload['organization'] = new Types.ObjectId(dto.organization);
     }
 
-    // Update team if provided
     if (dto.team !== undefined) {
       const team = await this.teamsRepository.findById(dto.team);
       if (!team) {
         throw new NotFoundException(`Team ${dto.team} not found`);
       }
+
+      const orgId = dto.organization ?? player.organization.toString();
+      if (!team.organizationId.equals(new Types.ObjectId(orgId))) {
+        throw new BadRequestException(
+          'Team does not belong to the specified organization',
+        );
+      }
+
       payload['team'] = new Types.ObjectId(dto.team);
     }
 

@@ -34,7 +34,6 @@ import { ClubGender, ClubStatus } from './enums/club.enum';
 export class ClubsController {
   constructor(private readonly clubsService: ClubsService) {}
 
-  // ─── POST /organizations/:organizationId/clubs ────────────────
   @Post()
   @RequirePermissions('sports:create')
   @HttpCode(HttpStatus.CREATED)
@@ -50,7 +49,6 @@ export class ClubsController {
     return this.clubsService.create(dto, user);
   }
 
-  // ─── GET /organizations/:organizationId/clubs ─────────────────
   @Get()
   @RequirePermissions('sports:read')
   @ApiOperation({ summary: 'List all clubs in an organization' })
@@ -83,7 +81,6 @@ export class ClubsController {
     });
   }
 
-  // ─── GET /organizations/:organizationId/clubs/:id ─────────────
   @Get(':id')
   @RequirePermissions('sports:read')
   @ApiOperation({ summary: 'Get a club by ID' })
@@ -94,7 +91,6 @@ export class ClubsController {
     return this.clubsService.findOne(id, user);
   }
 
-  // ─── PATCH /organizations/:organizationId/clubs/:id ───────────
   @Patch(':id')
   @RequirePermissions('sports:update')
   @ApiOperation({ summary: 'Update a club' })
@@ -109,7 +105,6 @@ export class ClubsController {
     return this.clubsService.update(id, dto, user);
   }
 
-  // ─── DELETE /organizations/:organizationId/clubs/:id ──────────
   @Delete(':id')
   @RequirePermissions('sports:delete')
   @ApiOperation({ summary: 'Delete a club' })

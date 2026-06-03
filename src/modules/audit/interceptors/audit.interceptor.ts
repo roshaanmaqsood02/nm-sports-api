@@ -50,7 +50,7 @@ export class AuditInterceptor implements NestInterceptor {
     };
 
     return next.handle().pipe(
-      // ✅ Use switchMap to handle async audit logging while passing data through
+      // Use switchMap to handle async audit logging while passing data through
       switchMap((responseData) =>
         from(
           this.auditService.record({
@@ -63,13 +63,13 @@ export class AuditInterceptor implements NestInterceptor {
               : undefined,
           }),
         ).pipe(
-          // ✅ Always return the original responseData, not the audit result
+          // Always return the original responseData, not the audit result
           tap(() => {}),
           switchMap(() => [responseData]),
         ),
       ),
 
-      // ✅ catchError must return an Observable synchronously
+      // catchError must return an Observable synchronously
       catchError((err) => {
         // Fire-and-forget the audit log — don't await it in the chain
         this.auditService

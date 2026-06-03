@@ -19,16 +19,15 @@ export class DivisionsService {
 
   constructor(
     private readonly divisionsRepository: DivisionsRepository,
-    // ✅ Inject Service not Repository
+    // Inject Service not Repository
     private readonly orgsService: OrganizationsService,
   ) {}
 
-  // ─── Create ───────────────────────────────────────────────────
   async create(
     dto: CreateDivisionDto,
     user: RequestUser,
   ): Promise<DivisionDocument> {
-    // ✅ Use service method — no direct repo access
+    // Use service method — no direct repo access
     await this.orgsService.validateOrg(dto.organizationId, user);
 
     // Duplicate name in same org
@@ -65,17 +64,16 @@ export class DivisionsService {
       createdBy: user._id as any,
     });
 
-    // ✅ Use service method to push ref
+    // Use service method to push ref
     await this.orgsService.addDivisionRef(
       dto.organizationId,
       (division._id as any).toString(),
     );
 
-    this.logger.log(`✅ Division created: "${division.name}" by ${user.email}`);
+    this.logger.log(`Division created: "${division.name}" by ${user.email}`);
     return division;
   }
 
-  // ─── Find All ─────────────────────────────────────────────────
   async findAll(
     organizationId: string,
     page = 1,
@@ -117,7 +115,6 @@ export class DivisionsService {
     };
   }
 
-  // ─── Find One ─────────────────────────────────────────────────
   async findOne(id: string, user: RequestUser): Promise<DivisionDocument> {
     const division = await this.divisionsRepository.findById(id);
     if (!division) {
@@ -126,7 +123,7 @@ export class DivisionsService {
     return division;
   }
 
-  // ─── Update ───────────────────────────────────────────────────
+  // Update
   async update(
     id: string,
     dto: UpdateDivisionDto,
@@ -176,7 +173,7 @@ export class DivisionsService {
     return updated!;
   }
 
-  // ─── Delete ───────────────────────────────────────────────────
+  // Delete
   async remove(id: string, user: RequestUser): Promise<{ message: string }> {
     const division = await this.divisionsRepository.findById(id);
     if (!division) {
@@ -185,7 +182,7 @@ export class DivisionsService {
 
     await this.divisionsRepository.softDelete(id);
 
-    // ✅ Use service method to pull ref
+    // Use service method to pull ref
     await this.orgsService.removeDivisionRef(
       division.organizationId.toString(),
       id,

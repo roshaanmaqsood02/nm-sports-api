@@ -21,9 +21,7 @@ export class TournamentsRepository {
     private readonly standingModel: Model<TournamentStandingDocument>,
   ) {}
 
-  // ══════════════════════════════════════════════════════════════
   // TOURNAMENT
-  // ══════════════════════════════════════════════════════════════
 
   async create(data: Partial<Tournament>): Promise<TournamentDocument> {
     return new this.tournamentModel(data).save();
@@ -89,7 +87,6 @@ export class TournamentsRepository {
       .exec();
   }
 
-  // ─── Team operations ──────────────────────────────────────────
   async addTeam(
     tournamentId: string,
     team: Record<string, any>,
@@ -145,9 +142,7 @@ export class TournamentsRepository {
       .exec();
   }
 
-  // ══════════════════════════════════════════════════════════════
   // BRACKET
-  // ══════════════════════════════════════════════════════════════
 
   async createBracketMatch(data: Partial<Bracket>): Promise<BracketDocument> {
     return new this.bracketModel(data).save();
@@ -198,9 +193,7 @@ export class TournamentsRepository {
     });
   }
 
-  // ══════════════════════════════════════════════════════════════
   // STANDINGS
-  // ══════════════════════════════════════════════════════════════
 
   async upsertStanding(
     tournamentId: string,

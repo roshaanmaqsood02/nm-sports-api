@@ -10,7 +10,7 @@ import {
 
 export type TournamentDocument = Tournament & Document;
 
-// ─── Embedded: Prize ─────────────────────────────────────────────────────────
+// Embedded: Prize
 @Schema({ _id: false })
 export class TournamentPrize {
   @Prop({ trim: true }) first?: string;
@@ -19,7 +19,7 @@ export class TournamentPrize {
   @Prop({ trim: true }) description?: string;
 }
 
-// ─── Embedded: Contact ───────────────────────────────────────────────────────
+// Embedded: Contact
 @Schema({ _id: false })
 export class TournamentContact {
   @Prop({ trim: true }) name?: string;
@@ -27,7 +27,7 @@ export class TournamentContact {
   @Prop({ trim: true }) phone?: string;
 }
 
-// ─── Embedded: Venue ─────────────────────────────────────────────────────────
+// Embedded: Venue
 @Schema({ _id: false })
 export class TournamentVenue {
   @Prop({ trim: true }) name?: string;
@@ -36,7 +36,7 @@ export class TournamentVenue {
   @Prop({ trim: true }) country?: string;
 }
 
-// ─── Embedded: Registered Team ───────────────────────────────────────────────
+// Embedded: Registered Team
 @Schema({ _id: true, timestamps: { createdAt: true, updatedAt: false } })
 export class TournamentTeam {
   @Prop({ type: Types.ObjectId, ref: 'Team', required: true })
@@ -48,11 +48,9 @@ export class TournamentTeam {
   @Prop({ trim: true })
   teamAbbreviation?: string;
 
-  // Seeding position (1 = top seed)
   @Prop({ min: 1 })
   seed?: number;
 
-  // Group assignment e.g. 'A', 'B', 'C'
   @Prop({ trim: true, uppercase: true })
   group?: string;
 
@@ -63,7 +61,6 @@ export class TournamentTeam {
   })
   status!: TournamentTeamStatus;
 
-  // Final placement e.g. 1, 2, 3
   @Prop({ min: 1 })
   finalPlacement?: number;
 
@@ -74,7 +71,6 @@ export class TournamentTeam {
 export const TournamentTeamSchema =
   SchemaFactory.createForClass(TournamentTeam);
 
-// ─── Embedded: Group ─────────────────────────────────────────────────────────
 @Schema({ _id: false })
 export class TournamentGroup {
   @Prop({ required: true, trim: true, uppercase: true })
@@ -87,7 +83,6 @@ export class TournamentGroup {
   @Prop({ default: 0 }) teamsAdvancing!: number; // how many qualify
 }
 
-// ─── Main Tournament Schema ───────────────────────────────────────────────────
 @Schema({
   timestamps: true,
   collection: 'tournaments',
@@ -100,7 +95,6 @@ export class TournamentGroup {
   },
 })
 export class Tournament {
-  // ── Identity ─────────────────────────────────────────────────
   @Prop({ required: true, trim: true, index: true })
   name!: string;
 
@@ -108,9 +102,8 @@ export class Tournament {
   description?: string;
 
   @Prop({ trim: true })
-  edition?: string; // e.g. '2025', '3rd Annual'
+  edition?: string;
 
-  // ── Organization ─────────────────────────────────────────────
   @Prop({
     type: Types.ObjectId,
     ref: 'Organization',
@@ -119,11 +112,9 @@ export class Tournament {
   })
   organizationId!: Types.ObjectId;
 
-  // ── Sport ────────────────────────────────────────────────────
   @Prop({ type: String, enum: SportType, required: true, index: true })
   sport!: SportType;
 
-  // ── Format ───────────────────────────────────────────────────
   @Prop({
     type: String,
     enum: TournamentFormat,
@@ -132,7 +123,6 @@ export class Tournament {
   })
   format!: TournamentFormat;
 
-  // ── Visibility ───────────────────────────────────────────────
   @Prop({
     type: String,
     enum: TournamentVisibility,
@@ -140,14 +130,12 @@ export class Tournament {
   })
   visibility!: TournamentVisibility;
 
-  // ── Capacity ─────────────────────────────────────────────────
   @Prop({ required: true, min: 2 })
   maxTeams!: number;
 
   @Prop({ default: 0 })
   registeredTeams!: number;
 
-  // ── Dates ────────────────────────────────────────────────────
   @Prop({ index: true })
   registrationStartDate?: Date;
 
@@ -160,35 +148,27 @@ export class Tournament {
   @Prop()
   endDate?: Date;
 
-  // ── Venue ────────────────────────────────────────────────────
   @Prop({ type: TournamentVenue, default: {} })
   venue!: TournamentVenue;
 
-  // ── Prize ────────────────────────────────────────────────────
   @Prop({ type: TournamentPrize, default: {} })
   prize!: TournamentPrize;
 
-  // ── Contact ──────────────────────────────────────────────────
   @Prop({ type: TournamentContact, default: {} })
   contact!: TournamentContact;
 
-  // ── Rules ────────────────────────────────────────────────────
   @Prop({ trim: true, maxlength: 5000 })
   rules?: string;
 
-  // ── Group stage config ────────────────────────────────────────
   @Prop({ default: 0 }) numberOfGroups!: number;
   @Prop({ default: 2 }) teamsAdvancingPerGroup!: number;
 
-  // ── Teams ────────────────────────────────────────────────────
   @Prop({ type: [TournamentTeamSchema], default: [] })
   teams!: TournamentTeam[];
 
-  // ── Groups ───────────────────────────────────────────────────
   @Prop({ type: [TournamentGroup], default: [] })
   groups!: TournamentGroup[];
 
-  // ── Status ───────────────────────────────────────────────────
   @Prop({
     type: String,
     enum: TournamentStatus,
@@ -197,7 +177,6 @@ export class Tournament {
   })
   status!: TournamentStatus;
 
-  // ── Winner ───────────────────────────────────────────────────
   @Prop({ type: Types.ObjectId, ref: 'Team' })
   winnerId?: Types.ObjectId;
 
@@ -210,18 +189,15 @@ export class Tournament {
   @Prop({ trim: true })
   runnerUpName?: string;
 
-  // ── Ownership ────────────────────────────────────────────────
   @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
   createdBy!: Types.ObjectId;
 
-  // ── Soft Delete ───────────────────────────────────────────────
   @Prop({ default: false }) isDeleted!: boolean;
   @Prop() deletedAt?: Date;
 }
 
 export const TournamentSchema = SchemaFactory.createForClass(Tournament);
 
-// ─── Virtuals ─────────────────────────────────────────────────────────────────
 TournamentSchema.virtual('isRegistrationOpen').get(function (
   this: TournamentDocument,
 ) {
@@ -244,7 +220,7 @@ TournamentSchema.virtual('availableSlots').get(function (
   return Math.max(0, this.maxTeams - this.registeredTeams);
 });
 
-// ─── Indexes ──────────────────────────────────────────────────────────────────
+// Indexes
 TournamentSchema.index({ organizationId: 1, status: 1 });
 TournamentSchema.index({ organizationId: 1, sport: 1 });
 TournamentSchema.index({ organizationId: 1, startDate: -1 });

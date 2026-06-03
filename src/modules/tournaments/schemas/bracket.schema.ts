@@ -4,7 +4,7 @@ import { BracketRound, BracketMatchStatus } from '../enums/tournament.enum';
 
 export type BracketDocument = Bracket & Document;
 
-// ─── Embedded: Bracket Team Entry ────────────────────────────────────────────
+// Embedded: Bracket Team Entry
 @Schema({ _id: false })
 export class BracketTeamEntry {
   @Prop({ type: Types.ObjectId, ref: 'Team' })
@@ -19,10 +19,10 @@ export class BracketTeamEntry {
   @Prop({ default: 0 }) score!: number;
 
   @Prop({ default: false }) isWinner!: boolean;
-  @Prop({ default: false }) isBye!: boolean; // auto-advance (no opponent)
+  @Prop({ default: false }) isBye!: boolean;
 }
 
-// ─── Main Bracket Schema ──────────────────────────────────────────────────────
+// Main Bracket Schema
 @Schema({
   timestamps: true,
   collection: 'brackets',
@@ -43,58 +43,46 @@ export class Bracket {
   })
   tournamentId!: Types.ObjectId;
 
-  // ── Round info ────────────────────────────────────────────────
+  // Round info
   @Prop({ type: String, enum: BracketRound, required: true, index: true })
   round!: BracketRound;
 
   @Prop({ trim: true })
-  roundLabel?: string; // custom label e.g. 'Quarter Final - Match 1'
+  roundLabel?: string;
 
-  // Round number for ordering (1 = first round)
   @Prop({ required: true, min: 1, index: true })
   roundNumber!: number;
 
-  // Match number within the round (1-based)
   @Prop({ required: true, min: 1 })
   matchNumber!: number;
 
-  // Group (for group stage brackets)
   @Prop({ trim: true, uppercase: true })
   group?: string;
 
-  // ── Teams ────────────────────────────────────────────────────
   @Prop({ type: BracketTeamEntry, default: {} })
   teamA!: BracketTeamEntry;
 
   @Prop({ type: BracketTeamEntry, default: {} })
   teamB!: BracketTeamEntry;
 
-  // ── Winner ───────────────────────────────────────────────────
   @Prop({ type: Types.ObjectId, ref: 'Team' })
   winnerId?: Types.ObjectId;
 
   @Prop({ trim: true })
   winnerName?: string;
 
-  // ── Linked match ─────────────────────────────────────────────
-  // Reference to Match document for full match details
   @Prop({ type: Types.ObjectId, ref: 'Match' })
   matchId?: Types.ObjectId;
 
-  // ── Schedule ─────────────────────────────────────────────────
   @Prop({ index: true })
   scheduledAt?: Date;
 
-  // ── Next bracket slot ─────────────────────────────────────────
-  // Which bracket match does the winner advance to?
   @Prop({ type: Types.ObjectId, ref: 'Bracket' })
   nextMatchId?: Types.ObjectId;
 
-  // Which bracket match does the loser go to? (double elimination)
   @Prop({ type: Types.ObjectId, ref: 'Bracket' })
   loserNextMatchId?: Types.ObjectId;
 
-  // ── Status ───────────────────────────────────────────────────
   @Prop({
     type: String,
     enum: BracketMatchStatus,

@@ -19,13 +19,12 @@ export class ClubsService {
 
   constructor(
     private readonly clubsRepository: ClubsRepository,
-    // ✅ Inject Service not Repository
+    // Inject Service not Repository
     private readonly orgsService: OrganizationsService,
   ) {}
 
-  // ─── Create ───────────────────────────────────────────────────
   async create(dto: CreateClubDto, user: RequestUser): Promise<ClubDocument> {
-    // ✅ Validate org + sport in one call via service
+    // Validate org + sport in one call via service
     await this.orgsService.validateOrgAndSport(
       dto.organizationId,
       dto.sport,
@@ -68,17 +67,16 @@ export class ClubsService {
       createdBy: user._id as any,
     });
 
-    // ✅ Use service method to push ref
+    // Use service method to push ref
     await this.orgsService.addClubRef(
       dto.organizationId,
       (club._id as any).toString(),
     );
 
-    this.logger.log(`✅ Club created: "${club.name}" by ${user.email}`);
+    this.logger.log(`Club created: "${club.name}" by ${user.email}`);
     return club;
   }
 
-  // ─── Find All ─────────────────────────────────────────────────
   async findAll(
     organizationId: string,
     page = 1,
@@ -126,14 +124,13 @@ export class ClubsService {
     };
   }
 
-  // ─── Find One ─────────────────────────────────────────────────
   async findOne(id: string, user: RequestUser): Promise<ClubDocument> {
     const club = await this.clubsRepository.findById(id);
     if (!club) throw new NotFoundException(`Club ${id} not found`);
     return club;
   }
 
-  // ─── Update ───────────────────────────────────────────────────
+  // Update
   async update(
     id: string,
     dto: UpdateClubDto,
@@ -181,14 +178,14 @@ export class ClubsService {
     return updated!;
   }
 
-  // ─── Delete ───────────────────────────────────────────────────
+  // Delete
   async remove(id: string, user: RequestUser): Promise<{ message: string }> {
     const club = await this.clubsRepository.findById(id);
     if (!club) throw new NotFoundException(`Club ${id} not found`);
 
     await this.clubsRepository.softDelete(id);
 
-    // ✅ Use service method to pull ref
+    // Use service method to pull ref
     await this.orgsService.removeClubRef(club.organizationId.toString(), id);
 
     this.logger.log(`Club deleted: ${id}`);

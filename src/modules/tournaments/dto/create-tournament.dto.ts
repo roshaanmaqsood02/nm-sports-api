@@ -40,18 +40,15 @@ export class CreateTournamentDto {
   @MaxLength(50)
   edition?: string;
 
-  // ── Organization ─────────────────────────────────────────────
   @ApiProperty({ example: '64abc123def456' })
   @IsMongoId()
   @IsNotEmpty()
   organizationId!: string;
 
-  // ── Sport ────────────────────────────────────────────────────
   @ApiProperty({ enum: SportType, example: SportType.BASKETBALL })
   @IsEnum(SportType)
   sport!: SportType;
 
-  // ── Format ───────────────────────────────────────────────────
   @ApiProperty({
     enum: TournamentFormat,
     default: TournamentFormat.SINGLE_ELIMINATION,
@@ -59,7 +56,6 @@ export class CreateTournamentDto {
   @IsEnum(TournamentFormat)
   format!: TournamentFormat;
 
-  // ── Visibility ───────────────────────────────────────────────
   @ApiPropertyOptional({
     enum: TournamentVisibility,
     default: TournamentVisibility.PUBLIC,
@@ -68,7 +64,6 @@ export class CreateTournamentDto {
   @IsEnum(TournamentVisibility)
   visibility?: TournamentVisibility;
 
-  // ── Capacity ─────────────────────────────────────────────────
   @ApiProperty({ example: 16, description: 'Max number of teams' })
   @IsInt()
   @Min(2)
@@ -76,7 +71,6 @@ export class CreateTournamentDto {
   @Type(() => Number)
   maxTeams!: number;
 
-  // ── Dates ────────────────────────────────────────────────────
   @ApiPropertyOptional({ example: '2025-01-01' })
   @IsOptional()
   @IsDateString()
@@ -96,7 +90,6 @@ export class CreateTournamentDto {
   @IsDateString()
   endDate?: string;
 
-  // ── Venue ────────────────────────────────────────────────────
   @ApiPropertyOptional({ example: 'Gaddafi Stadium' })
   @IsOptional()
   @IsString()
@@ -121,7 +114,6 @@ export class CreateTournamentDto {
   @MaxLength(100)
   venueCountry?: string;
 
-  // ── Prize ────────────────────────────────────────────────────
   @ApiPropertyOptional({ example: 'PKR 500,000' })
   @IsOptional()
   @IsString()
@@ -146,7 +138,6 @@ export class CreateTournamentDto {
   @MaxLength(300)
   prizeDescription?: string;
 
-  // ── Contact ──────────────────────────────────────────────────
   @ApiPropertyOptional({ example: 'Ahmed Khan' })
   @IsOptional()
   @IsString()
@@ -165,14 +156,12 @@ export class CreateTournamentDto {
   @MaxLength(20)
   contactPhone?: string;
 
-  // ── Rules ────────────────────────────────────────────────────
   @ApiPropertyOptional({ example: 'Standard FIBA rules apply...' })
   @IsOptional()
   @IsString()
   @MaxLength(5000)
   rules?: string;
 
-  // ── Group stage ───────────────────────────────────────────────
   @ApiPropertyOptional({ example: 4, description: 'Number of groups' })
   @IsOptional()
   @IsInt()

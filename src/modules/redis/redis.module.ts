@@ -47,7 +47,7 @@ import { AppCacheService } from './redis.service';
             },
           });
 
-          console.log(`✅  Redis (ioredis) connected → ${host}:${port}/${db}`);
+          console.log(`Redis (ioredis) connected → ${host}:${port}/${db}`);
 
           return {
             store,

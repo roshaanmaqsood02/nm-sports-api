@@ -70,7 +70,7 @@ export class UploadService {
         fs.unlinkSync(file.path);
       }
 
-      this.logger.log(`✅ Logo processed: ${finalFilename}`);
+      this.logger.log(`Logo processed: ${finalFilename}`);
 
       return {
         filename: finalFilename,

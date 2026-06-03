@@ -32,31 +32,25 @@ export class TournamentStanding {
   @Prop({ trim: true })
   teamAbbreviation?: string;
 
-  // Group (for group stage)
   @Prop({ trim: true, uppercase: true, index: true })
   group?: string;
 
-  // ── Record ────────────────────────────────────────────────────
   @Prop({ default: 0 }) played!: number;
   @Prop({ default: 0 }) won!: number;
   @Prop({ default: 0 }) drawn!: number;
   @Prop({ default: 0 }) lost!: number;
 
-  // ── Points ───────────────────────────────────────────────────
   @Prop({ default: 0 }) points!: number;
 
-  // ── Goals / Score ─────────────────────────────────────────────
   @Prop({ default: 0 }) goalsFor!: number;
+
   @Prop({ default: 0 }) goalsAgainst!: number;
 
-  // ── Ranking ──────────────────────────────────────────────────
   @Prop({ default: 0, index: true }) position!: number;
 
-  // Has this team advanced to knockout?
   @Prop({ default: false }) advanced!: boolean;
   @Prop({ default: false }) eliminated!: boolean;
 
-  // Form — last 5 results e.g. ['W','W','D','L','W']
   @Prop({ type: [String], default: [] })
   form!: string[];
 }
@@ -64,7 +58,7 @@ export class TournamentStanding {
 export const TournamentStandingSchema =
   SchemaFactory.createForClass(TournamentStanding);
 
-// ─── Virtuals ─────────────────────────────────────────────────────────────────
+// Virtuals
 TournamentStandingSchema.virtual('goalDifference').get(function (
   this: TournamentStandingDocument,
 ) {

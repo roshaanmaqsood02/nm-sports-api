@@ -72,7 +72,7 @@ export class LeaguesService {
       createdBy: user._id as any,
     });
 
-    this.logger.log(`✅ League created: "${league.name}" by ${user.email}`);
+    this.logger.log(`League created: "${league.name}" by ${user.email}`);
     return league;
   }
 

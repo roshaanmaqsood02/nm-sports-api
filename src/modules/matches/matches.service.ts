@@ -150,7 +150,7 @@ export class MatchesService {
     });
 
     this.logger.log(
-      `✅ Match created: ${homeTeam.name} vs ${awayTeam.name} ` +
+      `Match created: ${homeTeam.name} vs ${awayTeam.name} ` +
         `on ${dto.scheduledAt} by ${currentUser.email}`,
     );
     return match;
