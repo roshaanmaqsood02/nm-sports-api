@@ -9,6 +9,7 @@ import * as express from 'express';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { AppLoggerService } from './modules/logger/logger.service';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const compression = require('compression');
@@ -49,6 +50,8 @@ async function bootstrap() {
       crossOriginEmbedderPolicy: false,
     }),
   );
+
+  app.useWebSocketAdapter(new IoAdapter(app));
 
   app.enableCors({
     origin: isProd
@@ -92,11 +95,16 @@ async function bootstrap() {
       .addTag('Auth', 'Authentication — login, logout, refresh')
       .addTag('Users', 'User management')
       .addTag('Staff', 'Staff management - organization roles & permissions')
+      .addTag('Coaches', 'Coach management — assign to teams, status')
       .addTag('Roles', 'Role management')
       .addTag('Permissions', 'Permission management')
       .addTag('Organizations', 'Organization management')
       .addTag('Teams', 'Team management — roster, stats, logo')
       .addTag('Players', 'Player profiles — injuries, stats, transfers')
+      .addTag(
+        'Chat',
+        'Real-time messaging — conversations, messages, reactions',
+      )
       .addTag(
         'Leagues',
         'League management — schedule, player stats, team stats',

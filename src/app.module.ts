@@ -50,6 +50,8 @@ import { AppRedisModule } from './modules/redis/redis.module';
 import { TournamentsModule } from './modules/tournaments/tournaments.module';
 import { SeasonsModule } from './modules/seasons/seasons.module';
 import { StaffModule } from './modules/staff/staff.module';
+import { CoachesModule } from './modules/coaches/coaches.module';
+import { ChatModule } from './modules/chat/chat.module';
 
 @Module({
   imports: [
@@ -117,8 +119,10 @@ import { StaffModule } from './modules/staff/staff.module';
     UploadModule,
     UsersModule,
     StaffModule,
+    CoachesModule,
     AuthModule,
     RolesModule,
+    ChatModule,
     PermissionsModule,
     AuditModule,
     OrganizationsModule,
