@@ -4,7 +4,6 @@ import { MessageType, MessageStatus } from '../enums/chat.enum';
 
 export type MessageDocument = Message & Document;
 
-// ─── Embedded: Attachment ────────────────────────────────────────────────────
 @Schema({ _id: false })
 export class MessageAttachment {
   @Prop({ trim: true }) filename!: string;
@@ -15,20 +14,18 @@ export class MessageAttachment {
   @Prop() height?: number;
 }
 
-// ─── Embedded: Reaction ───────────────────────────────────────────────────────
 @Schema({ _id: false })
 export class MessageReaction {
   @Prop({ trim: true, required: true })
-  emoji!: string; // e.g. '👍', '❤️', '😂'
+  emoji!: string;
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }], default: [] })
-  userIds!: Types.ObjectId[]; // users who reacted
+  userIds!: Types.ObjectId[];
 
   @Prop({ default: 0 })
   count!: number;
 }
 
-// ─── Embedded: Read Receipt ──────────────────────────────────────────────────
 @Schema({ _id: false })
 export class ReadReceipt {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
@@ -38,7 +35,6 @@ export class ReadReceipt {
   readAt!: Date;
 }
 
-// ─── Main Message Schema ──────────────────────────────────────────────────────
 @Schema({
   timestamps: true,
   collection: 'messages',
@@ -51,7 +47,6 @@ export class ReadReceipt {
   },
 })
 export class Message {
-  // ── Conversation ──────────────────────────────────────────────
   @Prop({
     type: Types.ObjectId,
     ref: 'Conversation',
@@ -60,7 +55,6 @@ export class Message {
   })
   conversationId!: Types.ObjectId;
 
-  // ── Sender ────────────────────────────────────────────────────
   @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
   senderId!: Types.ObjectId;
 
@@ -70,7 +64,6 @@ export class Message {
   @Prop({ trim: true })
   senderAvatar?: string;
 
-  // ── Content ───────────────────────────────────────────────────
   @Prop({
     type: String,
     enum: MessageType,
@@ -82,29 +75,24 @@ export class Message {
   @Prop({ trim: true, maxlength: 4000 })
   text?: string;
 
-  // ── Attachment (for image/file/audio) ────────────────────────
   @Prop({ type: MessageAttachment })
   attachment?: MessageAttachment;
 
-  // ── Reply ─────────────────────────────────────────────────────
   @Prop({ type: Types.ObjectId, ref: 'Message', index: true })
   replyToId?: Types.ObjectId;
 
   @Prop({ trim: true })
-  replyToText?: string; // snapshot of replied message text
+  replyToText?: string;
 
   @Prop({ trim: true })
-  replyToSender?: string; // snapshot of replied message sender name
+  replyToSender?: string;
 
-  // ── Reactions ────────────────────────────────────────────────
   @Prop({ type: [MessageReaction], default: [] })
   reactions!: MessageReaction[];
 
-  // ── Read receipts ─────────────────────────────────────────────
   @Prop({ type: [ReadReceipt], default: [] })
   readBy!: ReadReceipt[];
 
-  // ── Status ───────────────────────────────────────────────────
   @Prop({
     type: String,
     enum: MessageStatus,
@@ -112,28 +100,25 @@ export class Message {
   })
   status!: MessageStatus;
 
-  // ── Edit history ──────────────────────────────────────────────
   @Prop({ default: false })
   isEdited!: boolean;
 
   @Prop()
   editedAt?: Date;
 
-  // ── Soft delete ───────────────────────────────────────────────
   @Prop({ default: false })
   isDeleted!: boolean;
 
   @Prop()
   deletedAt?: Date;
 
-  // System message flag (join/leave/rename events)
   @Prop({ default: false })
   isSystem!: boolean;
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);
 
-// ─── Indexes ──────────────────────────────────────────────────────────────────
+// Indexes
 MessageSchema.index({ conversationId: 1, createdAt: -1 });
 MessageSchema.index({ conversationId: 1, isDeleted: 1 });
 MessageSchema.index({ senderId: 1, createdAt: -1 });

@@ -42,7 +42,6 @@ import type { RequestUser } from '../auth/interfaces/jwt-payload.interface';
 export class PlayersController {
   constructor(private readonly playersService: PlayersService) {}
 
-  // ─── POST /players ────────────────────────────────────────────
   @Post()
   @RequirePermissions('players:create')
   @HttpCode(HttpStatus.CREATED)
@@ -59,7 +58,6 @@ export class PlayersController {
     return this.playersService.create(dto, user);
   }
 
-  // ─── GET /players ─────────────────────────────────────────────
   @Get()
   @RequirePermissions('players:read')
   @ApiOperation({ summary: 'List players (paginated + filters)' })
@@ -87,7 +85,6 @@ export class PlayersController {
     });
   }
 
-  // ─── GET /players/stats ───────────────────────────────────────
   @Get('stats')
   @RequirePermissions('players:read')
   @ApiOperation({ summary: 'Player count statistics' })
@@ -95,7 +92,6 @@ export class PlayersController {
     return this.playersService.getStats(user);
   }
 
-  // ─── GET /players/:id ─────────────────────────────────────────
   @Get(':id')
   @RequirePermissions('players:read')
   @ApiOperation({ summary: 'Get player by ID' })
@@ -105,7 +101,6 @@ export class PlayersController {
     return this.playersService.findOne(id, user);
   }
 
-  // ─── PATCH /players/:id ───────────────────────────────────────
   @Patch(':id')
   @RequirePermissions('players:update')
   @AuditLog({
@@ -126,7 +121,6 @@ export class PlayersController {
     return this.playersService.update(id, dto, user);
   }
 
-  // ─── DELETE /players/:id ──────────────────────────────────────
   @Delete(':id')
   @RequirePermissions('players:delete')
   @AuditLog({

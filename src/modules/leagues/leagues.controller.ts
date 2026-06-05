@@ -54,10 +54,6 @@ import type { RequestUser } from '../auth/interfaces/jwt-payload.interface';
 export class LeaguesController {
   constructor(private readonly leaguesService: LeaguesService) {}
 
-  // ══════════════════════════════════════════════════════════════
-  // LEAGUE CRUD
-  // ══════════════════════════════════════════════════════════════
-
   @Post()
   @RequirePermissions('sports:create')
   @HttpCode(HttpStatus.CREATED)
@@ -119,10 +115,6 @@ export class LeaguesController {
   removeLeague(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.leaguesService.removeLeague(id, user);
   }
-
-  // ══════════════════════════════════════════════════════════════
-  // GAME SCHEDULE
-  // ══════════════════════════════════════════════════════════════
 
   @Post(':id/games')
   @RequirePermissions('matches:create')
@@ -195,10 +187,6 @@ export class LeaguesController {
     return this.leaguesService.removeGame(gameId, user);
   }
 
-  // ══════════════════════════════════════════════════════════════
-  // PLAYER STATS
-  // ══════════════════════════════════════════════════════════════
-
   @Post(':id/player-stats')
   @RequirePermissions('players:update')
   @HttpCode(HttpStatus.OK)
@@ -240,10 +228,6 @@ export class LeaguesController {
   ) {
     return this.leaguesService.getPlayerStats(leagueId, query, user);
   }
-
-  // ══════════════════════════════════════════════════════════════
-  // TEAM STATS
-  // ══════════════════════════════════════════════════════════════
 
   @Post(':id/team-stats')
   @RequirePermissions('teams:update')

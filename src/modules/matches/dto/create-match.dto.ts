@@ -16,7 +16,6 @@ import { SportType } from '../../organizations/enums/organization.enum';
 import { MatchType, MatchVenueType } from '../enums/match.enum';
 
 export class CreateMatchDto {
-  // ── Identity ─────────────────────────────────────────────────
   @ApiPropertyOptional({ example: 'PSL Final 2025' })
   @IsOptional()
   @IsString()
@@ -29,7 +28,6 @@ export class CreateMatchDto {
   @MaxLength(30)
   matchNumber?: string;
 
-  // ── Organization ─────────────────────────────────────────────
   @ApiProperty({ example: '64abc123def456' })
   @IsMongoId()
   @IsNotEmpty()
@@ -40,7 +38,6 @@ export class CreateMatchDto {
   @IsMongoId()
   tournamentId?: string;
 
-  // ── Sport ────────────────────────────────────────────────────
   @ApiProperty({ enum: SportType, example: SportType.CRICKET })
   @IsEnum(SportType)
   sport!: SportType;
@@ -50,7 +47,6 @@ export class CreateMatchDto {
   @IsEnum(MatchType)
   matchType?: MatchType;
 
-  // ── Teams ────────────────────────────────────────────────────
   @ApiProperty({ example: '64abc123def458' })
   @IsMongoId()
   @IsNotEmpty()
@@ -61,12 +57,10 @@ export class CreateMatchDto {
   @IsNotEmpty()
   awayTeamId!: string;
 
-  // ── Schedule ─────────────────────────────────────────────────
   @ApiProperty({ example: '2025-06-15T14:00:00.000Z' })
   @IsDateString()
   scheduledAt!: string;
 
-  // ── Venue ────────────────────────────────────────────────────
   @ApiPropertyOptional({ example: 'Gaddafi Stadium' })
   @IsOptional()
   @IsString()
@@ -100,7 +94,6 @@ export class CreateMatchDto {
   @Type(() => Number)
   venueCapacity?: number;
 
-  // ── Officials ────────────────────────────────────────────────
   @ApiPropertyOptional({ example: 'Aleem Dar' })
   @IsOptional()
   @IsString()
@@ -131,7 +124,6 @@ export class CreateMatchDto {
   @MaxLength(100)
   umpire2?: string;
 
-  // ── Weather ──────────────────────────────────────────────────
   @ApiPropertyOptional({ example: 'Sunny' })
   @IsOptional()
   @IsString()
@@ -146,7 +138,6 @@ export class CreateMatchDto {
   @Type(() => Number)
   temperatureCelsius?: number;
 
-  // ── Notes ────────────────────────────────────────────────────
   @ApiPropertyOptional({ example: 'Day-night match' })
   @IsOptional()
   @IsString()

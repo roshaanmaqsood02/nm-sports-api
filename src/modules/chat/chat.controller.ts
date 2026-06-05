@@ -45,10 +45,6 @@ export class ChatController {
     private readonly chatGateway: ChatGateway,
   ) {}
 
-  // ══════════════════════════════════════════════════════════════
-  // CONVERSATIONS
-  // ══════════════════════════════════════════════════════════════
-
   @Post('conversations')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
@@ -123,7 +119,6 @@ export class ChatController {
     return this.chatService.leaveConversation(id, user);
   }
 
-  // ── Online status ─────────────────────────────────────────────
   @Get('conversations/:id/online')
   @ApiOperation({ summary: 'Get online status of conversation participants' })
   @ApiParam({ name: 'id' })
@@ -136,10 +131,6 @@ export class ChatController {
     const onlineUsers = this.chatGateway.getOnlineUsers();
     return this.chatService.getOnlineStatus(participantIds, onlineUsers);
   }
-
-  // ══════════════════════════════════════════════════════════════
-  // MESSAGES
-  // ══════════════════════════════════════════════════════════════
 
   @Post('conversations/:id/messages')
   @HttpCode(HttpStatus.CREATED)

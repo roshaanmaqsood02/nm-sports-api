@@ -19,7 +19,6 @@ import {
   ResourcePermission,
 } from '../enums/staff.enum';
 
-// ─── Resource Permission Entry DTO ────────────────────────────────────────────
 export class ResourcePermissionDto {
   @ApiProperty({
     enum: StaffResource,
@@ -67,9 +66,7 @@ export class ResourcePermissionDto {
   resourceNames?: string[];
 }
 
-// ─── Create Staff DTO ─────────────────────────────────────────────────────────
 export class CreateStaffDto {
-  // ── Identity ─────────────────────────────────────────────────
   @ApiProperty({ example: 'John' })
   @IsString()
   @IsNotEmpty()
@@ -92,13 +89,11 @@ export class CreateStaffDto {
   @Transform(({ value }) => value?.toLowerCase().trim())
   email!: string;
 
-  // ── Organization ─────────────────────────────────────────────
   @ApiProperty({ example: '64abc123def456' })
   @IsMongoId()
   @IsNotEmpty()
   organizationId!: string;
 
-  // ── Role ─────────────────────────────────────────────────────
   @ApiPropertyOptional({
     example: 'Head Coach',
     description: 'Optional job title / role label',
@@ -108,7 +103,6 @@ export class CreateStaffDto {
   @MaxLength(100)
   role?: string;
 
-  // ── Org Access ───────────────────────────────────────────────
   @ApiProperty({
     enum: OrgAccessType,
     example: OrgAccessType.LIMITED,
@@ -118,9 +112,6 @@ export class CreateStaffDto {
   @IsEnum(OrgAccessType)
   orgAccess!: OrgAccessType;
 
-  // ── Resource Permissions ──────────────────────────────────────
-  // Only relevant when orgAccess = limited_access
-  // Each entry = one resource checkbox with its permission dropdowns
   @ApiPropertyOptional({
     type: [ResourcePermissionDto],
     description:
@@ -164,7 +155,6 @@ export class CreateStaffDto {
   @Type(() => ResourcePermissionDto)
   resourcePermissions?: ResourcePermissionDto[];
 
-  // ── Notes ────────────────────────────────────────────────────
   @ApiPropertyOptional({ example: 'Manages the U21 team operations' })
   @IsOptional()
   @IsString()

@@ -14,7 +14,6 @@ import { SportType } from '../../organizations/enums/organization.enum';
 import { TeamGender, TeamType, TeamStatus } from '../enums/team.enum';
 
 export class CreateTeamDto {
-  // ── Identity ─────────────────────────────────────────────────
   @ApiProperty({ example: 'Lahore Lions Cricket Club' })
   @IsString()
   @IsNotEmpty()
@@ -44,17 +43,14 @@ export class CreateTeamDto {
   @Transform(({ value }) => value?.toUpperCase().trim())
   abbreviation!: string;
 
-  // ── Sport ────────────────────────────────────────────────────
   @ApiProperty({ enum: SportType, example: SportType.CRICKET })
   @IsEnum(SportType)
   sport!: SportType;
 
-  // ── Gender ───────────────────────────────────────────────────
   @ApiProperty({ enum: TeamGender, example: TeamGender.MALE })
   @IsEnum(TeamGender)
   gender!: TeamGender;
 
-  // ── Club or League ───────────────────────────────────────────
   @ApiProperty({
     enum: TeamType,
     default: TeamType.CLUB,
@@ -63,7 +59,6 @@ export class CreateTeamDto {
   @IsEnum(TeamType)
   type!: TeamType;
 
-  // ── Season ───────────────────────────────────────────────────
   @ApiProperty({ example: '2024-25' })
   @IsString()
   @IsNotEmpty()
@@ -81,13 +76,11 @@ export class CreateTeamDto {
   @Transform(({ value }) => value?.trim())
   subSeason?: string;
 
-  // ── Organization ─────────────────────────────────────────────
   @ApiProperty({ example: '64abc123def456' })
   @IsMongoId({ message: 'organizationId must be a valid MongoDB ObjectId' })
   @IsNotEmpty()
   organizationId!: string;
 
-  // ── Branding ─────────────────────────────────────────────────
   @ApiPropertyOptional({ example: '#1A73E8' })
   @IsOptional()
   @IsString()

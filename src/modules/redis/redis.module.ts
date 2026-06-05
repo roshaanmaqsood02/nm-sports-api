@@ -20,7 +20,6 @@ import { AppCacheService } from './redis.service';
         const raw = configService.get<any>('REDIS_ENABLED');
         const isEnabled = raw === true || raw === 'true';
 
-        // ── Fallback: in-memory when Redis disabled ──────────
         if (!isEnabled) {
           console.log('⚠️   Redis disabled — using in-memory cache');
           return {
@@ -29,7 +28,6 @@ import { AppCacheService } from './redis.service';
           };
         }
 
-        // ── ioredis store ────────────────────────────────────
         try {
           const store = await redisStore({
             host,
@@ -40,7 +38,7 @@ import { AppCacheService } from './redis.service';
             lazyConnect: true,
             retryStrategy: (times: number) => {
               if (times > 5) {
-                console.error('❌  Redis max retries reached');
+                console.error('Redis max retries reached');
                 return null;
               }
               return Math.min(times * 200, 2000);
@@ -55,8 +53,8 @@ import { AppCacheService } from './redis.service';
             max: maxItems,
           };
         } catch (err: any) {
-          console.error(`❌  Redis failed: ${err?.message}`);
-          console.log('⚠️   Falling back to in-memory cache');
+          console.error(`Redis failed: ${err?.message}`);
+          console.log('Falling back to in-memory cache');
           return {
             ttl: ttl * 1000,
             max: maxItems,

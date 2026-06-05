@@ -38,7 +38,6 @@ export class OtherContactDto {
 }
 
 export class CreatePlayerDto {
-  // ── Identity ─────────────────────────────────────────────────
   @ApiProperty({ example: 'Babar Azam' })
   @IsString()
   @IsNotEmpty()
@@ -47,26 +46,22 @@ export class CreatePlayerDto {
   @Transform(({ value }) => value?.trim())
   name!: string;
 
-  // ── Organization ─────────────────────────────────────────────
   @ApiProperty({ example: '64abc123def456' })
   @IsMongoId()
   @IsNotEmpty()
   organization!: string;
 
-  // ── Team ──────────────────────────────────────────────────────
   @ApiProperty({ example: '64abc123def457' })
   @IsMongoId()
   @IsNotEmpty()
   team!: string;
 
-  // ── Positions ─────────────────────────────────────────────────
   @ApiProperty({ example: ['Opening Batsman', 'Wicket Keeper'], isArray: true })
   @IsArray()
   @IsString({ each: true })
   @IsNotEmpty()
   positions!: string[];
 
-  // ── Jersey Number ─────────────────────────────────────────────
   @ApiPropertyOptional({ example: 56 })
   @IsOptional()
   @IsInt()
@@ -75,13 +70,11 @@ export class CreatePlayerDto {
   @Type(() => Number)
   number?: number;
 
-  // ── Status ────────────────────────────────────────────────────
   @ApiPropertyOptional({ enum: PlayerStatus, default: PlayerStatus.ACTIVE })
   @IsOptional()
   @IsEnum(PlayerStatus)
   status?: PlayerStatus;
 
-  // ── Message ───────────────────────────────────────────────────
   @ApiPropertyOptional({ example: 'Star player in the team' })
   @IsOptional()
   @IsString()
@@ -89,7 +82,6 @@ export class CreatePlayerDto {
   @Transform(({ value }) => value?.trim())
   message?: string;
 
-  // ── Other Contact ─────────────────────────────────────────────
   @ApiPropertyOptional()
   @IsOptional()
   @Type(() => OtherContactDto)

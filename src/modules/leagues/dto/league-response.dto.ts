@@ -1,7 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { LeagueStatus, GameStatus } from '../enums/league.enum';
 
-// ─── League ───────────────────────────────────────────────────────────────────
 export class LeagueResponseDto {
   @ApiProperty() _id!: string;
   @ApiProperty() name!: string;
@@ -16,7 +15,6 @@ export class LeagueResponseDto {
   @ApiProperty() updatedAt!: Date;
 }
 
-// ─── Game Schedule ────────────────────────────────────────────────────────────
 export class GameScheduleResponseDto {
   @ApiProperty() _id!: string;
   @ApiProperty() leagueId!: string;
@@ -57,7 +55,6 @@ export class GameScheduleResponseDto {
   @ApiProperty() createdAt!: Date;
 }
 
-// ─── Player Stats — Scoring view ─────────────────────────────────────────────
 export class PlayerStatsScoringDto {
   @ApiProperty() _id!: string;
   @ApiProperty() playerName!: string;
@@ -77,7 +74,6 @@ export class PlayerStatsScoringDto {
   @ApiProperty() HIGH!: number;
 }
 
-// ─── Player Stats — Rebounds view ────────────────────────────────────────────
 export class PlayerStatsReboundsDto {
   @ApiProperty() _id!: string;
   @ApiProperty() playerName!: string;
@@ -89,7 +85,6 @@ export class PlayerStatsReboundsDto {
   @ApiProperty() REB!: number;
 }
 
-// ─── Player Stats — Misc view ─────────────────────────────────────────────────
 export class PlayerStatsMiscDto {
   @ApiProperty() _id!: string;
   @ApiProperty() playerName!: string;
@@ -103,18 +98,16 @@ export class PlayerStatsMiscDto {
   @ApiProperty() BLKPG!: number;
 }
 
-// ─── Team Stats — Team Record view ───────────────────────────────────────────
 export class TeamStatsRecordDto {
   @ApiProperty() _id!: string;
   @ApiProperty() teamName!: string;
-  @ApiProperty() totalQ1Score!: number; // 1
-  @ApiProperty() totalQ2Score!: number; // 2
-  @ApiProperty() totalOTScore!: number; // OT
-  @ApiProperty() totalScore!: number; // Total
-  @ApiProperty() record!: string; // e.g. '12-3'
+  @ApiProperty() totalQ1Score!: number;
+  @ApiProperty() totalQ2Score!: number;
+  @ApiProperty() totalOTScore!: number;
+  @ApiProperty() totalScore!: number;
+  @ApiProperty() record!: string;
 }
 
-// ─── Team Stats — Player view ─────────────────────────────────────────────────
 export class TeamStatsPlayerDto {
   @ApiProperty() _id!: string;
   @ApiProperty() teamName!: string;
@@ -122,7 +115,6 @@ export class TeamStatsPlayerDto {
   @ApiProperty() playerCount!: number;
 }
 
-// ─── Team Stats — Scoring view ────────────────────────────────────────────────
 export class TeamStatsScoringDto {
   @ApiProperty() _id!: string;
   @ApiProperty() teamName!: string;
@@ -139,7 +131,6 @@ export class TeamStatsScoringDto {
   @ApiProperty() PTS!: number;
 }
 
-// ─── Team Stats — Rebounds view ───────────────────────────────────────────────
 export class TeamStatsReboundsDto {
   @ApiProperty() _id!: string;
   @ApiProperty() teamName!: string;
@@ -150,7 +141,6 @@ export class TeamStatsReboundsDto {
   @ApiProperty() REB!: number;
 }
 
-// ─── Team Stats — Misc view ───────────────────────────────────────────────────
 export class TeamStatsMiscDto {
   @ApiProperty() _id!: string;
   @ApiProperty() teamName!: string;
@@ -163,7 +153,6 @@ export class TeamStatsMiscDto {
   @ApiProperty() BLKPG!: number;
 }
 
-// ─── Paginated wrappers ───────────────────────────────────────────────────────
 export class PaginatedLeaguesDto {
   @ApiProperty({ type: [LeagueResponseDto] }) data!: LeagueResponseDto[];
   @ApiProperty() page!: number;

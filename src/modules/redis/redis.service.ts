@@ -23,7 +23,6 @@ export class AppCacheService {
     );
   }
 
-  // ─── GET ──────────────────────────────────────────────────────
   async get<T>(key: string): Promise<T | null> {
     if (!this.enabled) return null;
 
@@ -41,7 +40,6 @@ export class AppCacheService {
     }
   }
 
-  // ─── SET ──────────────────────────────────────────────────────
   async set<T>(
     key: string,
     value: T,
@@ -57,7 +55,6 @@ export class AppCacheService {
     }
   }
 
-  // ─── DELETE ───────────────────────────────────────────────────
   async del(key: string): Promise<void> {
     if (!this.enabled) return;
 
@@ -69,7 +66,6 @@ export class AppCacheService {
     }
   }
 
-  // ─── DELETE MANY (pattern-based) ──────────────────────────────
   async delMany(keys: string[]): Promise<void> {
     if (!this.enabled || keys.length === 0) return;
 
@@ -81,26 +77,24 @@ export class AppCacheService {
     }
   }
 
-  // ─── GET or SET (cache-aside pattern) ────────────────────────
   async getOrSet<T>(
     key: string,
     fetchFn: () => Promise<T>,
     ttl: number = this.defaultTtl,
   ): Promise<T> {
-    // 1. Try cache first
+    // Try cache first
     const cached = await this.get<T>(key);
     if (cached !== null) return cached;
 
-    // 2. Fetch from source
+    // Fetch from source
     const value = await fetchFn();
 
-    // 3. Store in cache (don't await — fire and forget)
+    // Store in cache (don't await — fire and forget)
     this.set(key, value, ttl).catch(() => {});
 
     return value;
   }
 
-  // ─── WRAP (same as getOrSet with error isolation) ─────────────
   async wrap<T>(
     key: string,
     fetchFn: () => Promise<T>,
@@ -115,7 +109,6 @@ export class AppCacheService {
     }
   }
 
-  // ─── INVALIDATE by prefix ─────────────────────────────────────
   // Stores a tag set in Redis — all keys tagged under this prefix
   async invalidateByPrefix(prefix: string): Promise<void> {
     if (!this.enabled) return;
@@ -159,7 +152,6 @@ export class AppCacheService {
     }
   }
 
-  // ─── RESET (flush all) ────────────────────────────────────────
   async reset(): Promise<void> {
     if (!this.enabled) return;
 
@@ -191,7 +183,6 @@ export class AppCacheService {
     }
   }
 
-  // ─── Health check ─────────────────────────────────────────────
   async ping(): Promise<boolean> {
     if (!this.enabled) return false;
 

@@ -37,10 +37,6 @@ export class LeaguesService {
     private readonly orgsRepo: OrganizationsRepository,
   ) {}
 
-  // ══════════════════════════════════════════════════════════════
-  // LEAGUE
-  // ══════════════════════════════════════════════════════════════
-
   async createLeague(dto: CreateLeagueDto, user: RequestUser) {
     const org = await this.orgsRepo.findById(dto.organizationId);
     if (!org) throw new NotFoundException(`Organization not found`);
@@ -140,10 +136,6 @@ export class LeaguesService {
     await this.repo.softDeleteLeague(id);
     return { message: 'League deleted successfully' };
   }
-
-  // ══════════════════════════════════════════════════════════════
-  // GAME SCHEDULE
-  // ══════════════════════════════════════════════════════════════
 
   async createGame(dto: CreateGameScheduleDto, user: RequestUser) {
     const league = await this.repo.findLeagueById(dto.leagueId);
@@ -254,10 +246,6 @@ export class LeaguesService {
     return { message: 'Game deleted successfully' };
   }
 
-  // ══════════════════════════════════════════════════════════════
-  // PLAYER STATS
-  // ══════════════════════════════════════════════════════════════
-
   async upsertPlayerStats(dto: UpsertPlayerStatsDto, user: RequestUser) {
     const league = await this.repo.findLeagueById(dto.leagueId);
     if (!league)
@@ -361,10 +349,6 @@ export class LeaguesService {
       totalPages: Math.ceil(total / limit),
     };
   }
-
-  // ══════════════════════════════════════════════════════════════
-  // TEAM STATS
-  // ══════════════════════════════════════════════════════════════
 
   async upsertTeamStats(dto: UpsertTeamStatsDto, user: RequestUser) {
     const league = await this.repo.findLeagueById(dto.leagueId);

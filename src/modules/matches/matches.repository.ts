@@ -101,7 +101,6 @@ export class MatchesRepository {
       .exec();
   }
 
-  // ─── Add event to timeline ────────────────────────────────────
   async addEvent(
     matchId: string,
     event: Record<string, any>,
@@ -119,7 +118,6 @@ export class MatchesRepository {
       .exec();
   }
 
-  // ─── Remove event from timeline ───────────────────────────────
   async removeEvent(
     matchId: string,
     eventId: string,
@@ -135,7 +133,6 @@ export class MatchesRepository {
       .exec();
   }
 
-  // ─── Update event in timeline ─────────────────────────────────
   async updateEvent(
     matchId: string,
     eventId: string,
@@ -161,7 +158,6 @@ export class MatchesRepository {
       .exec();
   }
 
-  // ─── Add / update player performance ─────────────────────────
   async upsertPerformance(
     matchId: string,
     playerId: string,
@@ -220,7 +216,6 @@ export class MatchesRepository {
       .exec();
   }
 
-  // ─── Remove player performance ────────────────────────────────
   async removePerformance(
     matchId: string,
     playerId: string,
@@ -236,7 +231,6 @@ export class MatchesRepository {
       .exec();
   }
 
-  // ─── Upcoming matches ─────────────────────────────────────────
   async findUpcoming(
     filter: Filter<MatchDocument> = {},
     limit = 5,
@@ -257,7 +251,6 @@ export class MatchesRepository {
       .exec();
   }
 
-  // ─── Live matches ─────────────────────────────────────────────
   async findLive(filter: Filter<MatchDocument> = {}): Promise<MatchDocument[]> {
     return this.matchModel
       .find({ ...filter, isDeleted: false, status: MatchStatus.IN_PROGRESS })
@@ -268,7 +261,6 @@ export class MatchesRepository {
       .exec();
   }
 
-  // ─── Completed matches ────────────────────────────────────────
   async findCompleted(
     filter: Filter<MatchDocument> = {},
     limit = 10,
@@ -284,7 +276,6 @@ export class MatchesRepository {
       .exec();
   }
 
-  // ─── Team head-to-head ────────────────────────────────────────
   async findHeadToHead(
     teamAId: string,
     teamBId: string,
@@ -312,7 +303,6 @@ export class MatchesRepository {
       .exec();
   }
 
-  // ─── Find matches by date range ───────────────────────────────
   async findByDateRange(
     startDate: Date,
     endDate: Date,
@@ -332,7 +322,6 @@ export class MatchesRepository {
       .exec();
   }
 
-  // ─── Stats aggregation ────────────────────────────────────────
   async getStatsSummary(
     filter: Filter<MatchDocument> = {},
   ): Promise<Record<string, any>> {

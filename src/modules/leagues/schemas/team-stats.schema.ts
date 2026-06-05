@@ -15,7 +15,6 @@ export type TeamStatsDocument = TeamStats & Document;
   },
 })
 export class TeamStats {
-  // ── References ────────────────────────────────────────────────
   @Prop({ type: Types.ObjectId, ref: 'League', required: true, index: true })
   leagueId!: Types.ObjectId;
 
@@ -31,7 +30,6 @@ export class TeamStats {
   @Prop({ trim: true })
   season!: string;
 
-  // ── Team Record ───────────────────────────────────────────────
   // GP — Games Played
   @Prop({ default: 0 }) GP!: number;
 
@@ -51,7 +49,6 @@ export class TeamStats {
   @Prop({ default: 0 }) totalOTScore!: number;
   @Prop({ default: 0 }) totalScore!: number;
 
-  // ── Scoring Stats ─────────────────────────────────────────────
   @Prop({ default: 0 }) PTS!: number;
   @Prop({ default: 0 }) FGM!: number;
   @Prop({ default: 0 }) FGA!: number;
@@ -60,23 +57,19 @@ export class TeamStats {
   @Prop({ default: 0 }) ThreePM!: number;
   @Prop({ default: 0 }) ThreePA!: number;
 
-  // ── Rebound Stats ─────────────────────────────────────────────
   @Prop({ default: 0 }) REB!: number;
   @Prop({ default: 0 }) OFF!: number;
   @Prop({ default: 0 }) DEF!: number;
 
-  // ── Misc Stats ────────────────────────────────────────────────
   @Prop({ default: 0 }) AST!: number;
   @Prop({ default: 0 }) STL!: number;
   @Prop({ default: 0 }) BLK!: number;
 
-  // ── Players in team (count) ───────────────────────────────────
   @Prop({ default: 0 }) playerCount!: number;
 }
 
 export const TeamStatsSchema = SchemaFactory.createForClass(TeamStats);
 
-// ─── Computed virtuals ────────────────────────────────────────────────────────
 TeamStatsSchema.virtual('FGPct').get(function (this: TeamStatsDocument) {
   return this.FGA > 0 ? +((this.FGM / this.FGA) * 100).toFixed(1) : 0;
 });
@@ -115,6 +108,7 @@ TeamStatsSchema.virtual('record').get(function (this: TeamStatsDocument) {
   return `${this.wins}-${this.losses}${this.draws > 0 ? `-${this.draws}` : ''}`;
 });
 
+// Indexes
 TeamStatsSchema.index({ leagueId: 1, teamId: 1 }, { unique: true });
 TeamStatsSchema.index({ leagueId: 1, wins: -1 });
 TeamStatsSchema.index({ leagueId: 1, PTS: -1 });

@@ -4,7 +4,6 @@ import {
   IsBoolean,
   IsEnum,
   IsMongoId,
-  IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
@@ -22,7 +21,6 @@ export class CreateConversationDto {
   @IsEnum(ConversationType)
   type!: ConversationType;
 
-  // ── Group / channel specific ──────────────────────────────────
   @ApiPropertyOptional({ example: 'Team Strategy Room' })
   @IsOptional()
   @IsString()
@@ -36,7 +34,6 @@ export class CreateConversationDto {
   @MaxLength(300)
   description?: string;
 
-  // ── Participants ──────────────────────────────────────────────
   @ApiProperty({
     example: ['64abc123def456', '64abc123def457'],
     description:
@@ -47,7 +44,6 @@ export class CreateConversationDto {
   @ArrayMinSize(1)
   participantIds!: string[];
 
-  // ── Context refs ─────────────────────────────────────────────
   @ApiPropertyOptional({ example: '64abc123def456' })
   @IsOptional()
   @IsMongoId()

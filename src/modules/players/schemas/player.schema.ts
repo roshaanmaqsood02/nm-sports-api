@@ -4,7 +4,6 @@ import { PlayerStatus } from '../enums/player.enum';
 
 export type PlayerDocument = Player & Document;
 
-// ─── Embedded: Other Contact ──────────────────────────────────────────────────
 @Schema({ _id: false })
 export class OtherContact {
   @Prop({ trim: true, lowercase: true }) email?: string;
@@ -14,8 +13,6 @@ export class OtherContact {
 }
 
 export const OtherContactSchema = SchemaFactory.createForClass(OtherContact);
-
-// ─── Main Player Schema ───────────────────────────────────────────────────────
 @Schema({
   timestamps: true,
   collection: 'players',
@@ -28,11 +25,9 @@ export const OtherContactSchema = SchemaFactory.createForClass(OtherContact);
   },
 })
 export class Player {
-  // ── Identity ─────────────────────────────────────────────────
   @Prop({ required: true, trim: true, index: true })
-  name!: string; // Combined name (e.g., 'Babar Azam')
+  name!: string;
 
-  // ── Organization reference ────────────────────────────────────
   @Prop({
     type: Types.ObjectId,
     ref: 'Organization',
@@ -41,7 +36,6 @@ export class Player {
   })
   organization!: Types.ObjectId;
 
-  // ── Team reference ─────────────────────────────────────────────
   @Prop({
     type: Types.ObjectId,
     ref: 'Team',
@@ -50,15 +44,12 @@ export class Player {
   })
   team!: Types.ObjectId;
 
-  // ── Positions ──────────────────────────────────────────────────
   @Prop({ type: [String], required: true })
   positions!: string[]; // e.g., ['Opening Batsman', 'Wicket Keeper']
 
-  // ── Jersey Number ─────────────────────────────────────────────
   @Prop({ min: 0, max: 999 })
   number?: number;
 
-  // ── Status ─────────────────────────────────────────────────────
   @Prop({
     type: String,
     enum: PlayerStatus,
@@ -67,15 +58,12 @@ export class Player {
   })
   status!: PlayerStatus;
 
-  // ── Message ────────────────────────────────────────────────────
   @Prop({ trim: true, maxlength: 500 })
   message?: string;
 
-  // ── Other Contact ─────────────────────────────────────────────
   @Prop({ type: OtherContactSchema, default: {} })
   otherContact!: OtherContact;
 
-  // ── Ownership ──────────────────────────────────────────────────
   @Prop({
     type: Types.ObjectId,
     ref: 'User',
@@ -84,7 +72,6 @@ export class Player {
   })
   createdBy!: Types.ObjectId;
 
-  // ── Soft Delete ────────────────────────────────────────────────
   @Prop({ default: false })
   isDeleted!: boolean;
 
@@ -94,12 +81,11 @@ export class Player {
 
 export const PlayerSchema = SchemaFactory.createForClass(Player);
 
-// ─── Virtual: full name ───────────────────────────────────────────────────────
 PlayerSchema.virtual('fullName').get(function (this: PlayerDocument) {
   return this.name;
 });
 
-// ─── Indexes ──────────────────────────────────────────────────────────────────
+// Indexes
 PlayerSchema.index({ name: 1, organization: 1, isDeleted: 1 });
 PlayerSchema.index({ team: 1, isDeleted: 1 });
 PlayerSchema.index({ organization: 1, team: 1 });

@@ -37,7 +37,6 @@ import { OrgAccessType, StaffStatus } from './enums/staff.enum';
 export class StaffController {
   constructor(private readonly staffService: StaffService) {}
 
-  // ─── POST /organizations/:orgId/staff ────────────────────────
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
@@ -67,7 +66,6 @@ export class StaffController {
     return this.staffService.create(dto, user);
   }
 
-  // ─── GET /organizations/:orgId/staff ─────────────────────────
   @Get()
   @ApiOperation({ summary: 'List all staff in an organization — Admin only' })
   @ApiParam({ name: 'organizationId' })
@@ -93,7 +91,6 @@ export class StaffController {
     });
   }
 
-  // ─── GET /organizations/:orgId/staff/stats ────────────────────
   @Get('stats')
   @ApiOperation({ summary: 'Staff statistics — Admin only' })
   @ApiParam({ name: 'organizationId' })
@@ -104,7 +101,6 @@ export class StaffController {
     return this.staffService.getStats(organizationId, user);
   }
 
-  // ─── GET /organizations/:orgId/staff/:id ─────────────────────
   @Get(':id')
   @ApiOperation({ summary: 'Get a staff member by ID — Admin only' })
   @ApiParam({ name: 'organizationId' })
@@ -114,7 +110,6 @@ export class StaffController {
     return this.staffService.findOne(id, user);
   }
 
-  // ─── PATCH /organizations/:orgId/staff/:id ───────────────────
   @Patch(':id')
   @ApiOperation({ summary: 'Update staff details — Super Admin only' })
   @ApiParam({ name: 'organizationId' })
@@ -128,7 +123,6 @@ export class StaffController {
     return this.staffService.update(id, dto, user);
   }
 
-  // ─── PATCH /organizations/:orgId/staff/:id/permissions ───────
   @Patch(':id/permissions')
   @ApiOperation({
     summary:
@@ -146,7 +140,6 @@ export class StaffController {
     return this.staffService.updatePermissions(id, dto, user);
   }
 
-  // ─── POST /organizations/:orgId/staff/:id/suspend ────────────
   @Post(':id/suspend')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Suspend a staff member — Super Admin only' })
@@ -156,7 +149,6 @@ export class StaffController {
     return this.staffService.suspend(id, user);
   }
 
-  // ─── POST /organizations/:orgId/staff/:id/activate ───────────
   @Post(':id/activate')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -168,7 +160,6 @@ export class StaffController {
     return this.staffService.activate(id, user);
   }
 
-  // ─── POST /organizations/:orgId/staff/:id/resend-invitation ──
   @Post(':id/resend-invitation')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Resend invitation email — Super Admin only' })
@@ -178,8 +169,6 @@ export class StaffController {
     return this.staffService.resendInvitation(id, user);
   }
 
-  // ─── POST /staff/accept-invitation ──────────────────────────
-  // @Public — no auth required to accept an invite
   @Public()
   @Post('/accept-invitation')
   @HttpCode(HttpStatus.OK)
@@ -192,7 +181,6 @@ export class StaffController {
     return this.staffService.acceptInvitation(dto);
   }
 
-  // ─── DELETE /organizations/:orgId/staff/:id ──────────────────
   @Delete(':id')
   @ApiOperation({ summary: 'Remove a staff member — Super Admin only' })
   @ApiParam({ name: 'organizationId' })

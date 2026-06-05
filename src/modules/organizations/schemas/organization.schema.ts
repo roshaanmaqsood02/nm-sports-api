@@ -50,7 +50,6 @@ export class OrgAddress {
   zipCode!: string;
 }
 
-// Embedded: Contact
 @Schema({ _id: false })
 export class OrgContact {
   @Prop({ trim: true, lowercase: true })
@@ -124,15 +123,12 @@ export class Organization {
   })
   gender!: OrganizationGender;
 
-  // ── Divisions ─────────────────────────────────────────────────
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Division' }], default: [] })
   divisions!: Types.ObjectId[];
 
-  // ── Clubs ─────────────────────────────────────────────────────
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Club' }], default: [] })
   clubs!: Types.ObjectId[];
 
-  // Brand color — hex value e.g. '#FF5733'
   @Prop({
     trim: true,
     match: [/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Must be a valid hex color'],
@@ -144,7 +140,6 @@ export class Organization {
   logo?: OrgLogo;
 
   // Ownership
-  // The user who created / owns this organization
   @Prop({
     type: Types.ObjectId,
     ref: 'User',

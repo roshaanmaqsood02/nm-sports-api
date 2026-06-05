@@ -23,7 +23,6 @@ import {
   SubseasonStatus,
 } from '../enums/season.enum';
 
-// ─── Subseason DTO ────────────────────────────────────────────────────────────
 export class CreateSubseasonDto {
   @ApiProperty({ example: 'Spring 2025' })
   @IsString()
@@ -46,7 +45,6 @@ export class CreateSubseasonDto {
   @Type(() => Number)
   order?: number;
 
-  // ── Data Source ───────────────────────────────────────────────
   @ApiProperty({
     enum: DataSourceType,
     default: DataSourceType.SCRATCH,
@@ -55,7 +53,6 @@ export class CreateSubseasonDto {
   @IsEnum(DataSourceType)
   dataSource!: DataSourceType;
 
-  // ── Copy Subseason config (when dataSource = copy_subseason) ──
   @ApiPropertyOptional({ example: '64abc123def456' })
   @IsOptional()
   @IsMongoId()
@@ -103,7 +100,6 @@ export class CreateSubseasonDto {
   @MaxLength(500)
   bottomTeamPageSource?: string;
 
-  // ── Game ID Generation ────────────────────────────────────────
   @ApiProperty({
     enum: GameIdGeneration,
     default: GameIdGeneration.NONE,
@@ -118,7 +114,6 @@ export class CreateSubseasonDto {
   @MaxLength(20)
   gameIdPrefix?: string;
 
-  // ── Seed Config ───────────────────────────────────────────────
   @ApiPropertyOptional({ example: true })
   @IsOptional()
   @IsBoolean()
@@ -145,7 +140,6 @@ export class CreateSubseasonDto {
   @MaxLength(500)
   seedRules?: string;
 
-  // ── Titles / Labels ───────────────────────────────────────────
   @ApiPropertyOptional({
     example: 'Game Type',
     description: 'Custom label for the game type column',
@@ -164,7 +158,6 @@ export class CreateSubseasonDto {
   @MaxLength(50)
   groupNameTitle?: string;
 
-  // ── Static Grouping ───────────────────────────────────────────
   @ApiPropertyOptional({
     enum: StaticGroupingType,
     default: StaticGroupingType.NONE,
@@ -182,7 +175,6 @@ export class CreateSubseasonDto {
   @IsString({ each: true })
   customGroups?: string[];
 
-  // ── Dates ────────────────────────────────────────────────────
   @ApiPropertyOptional({ example: '2025-03-01' })
   @IsOptional()
   @IsDateString()
@@ -205,7 +197,6 @@ export class CreateSubseasonDto {
   notes?: string;
 }
 
-// ─── Season DTO ───────────────────────────────────────────────────────────────
 export class CreateSeasonDto {
   @ApiProperty({ example: '2024-25 Season' })
   @IsString()
@@ -272,7 +263,6 @@ export class CreateSeasonDto {
   @MaxLength(1000)
   description?: string;
 
-  // ── Optional: create first subseason inline ───────────────────
   @ApiPropertyOptional({
     type: () => CreateSubseasonDto,
     description: 'Optionally create the first subseason inline',

@@ -186,7 +186,6 @@ export class PlayersService {
     return updated!;
   }
 
-  // ─── Delete ───────────────────────────────────────────────────
   async remove(
     id: string,
     currentUser: RequestUser,
@@ -200,7 +199,6 @@ export class PlayersService {
     return { message: 'Player deleted successfully' };
   }
 
-  // ─── Stats summary ────────────────────────────────────────────
   async getStats(currentUser: RequestUser) {
     const filter: any = { isDeleted: false };
 
@@ -232,7 +230,6 @@ export class PlayersService {
     return { total, active, inactive };
   }
 
-  // ─── Access helpers ───────────────────────────────────────────
   private checkAccess(player: PlayerDocument, user: RequestUser): void {
     if (user.isSuperAdmin) return;
     if (user.role === UserRole.ADMIN) return;

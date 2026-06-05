@@ -45,7 +45,6 @@ export class UpsertPlayerStatsDto {
   @IsString()
   season?: string;
 
-  // ── Scoring ──────────────────────────────────────────────────
   @ApiPropertyOptional()
   @IsOptional()
   @IsInt()
@@ -101,7 +100,6 @@ export class UpsertPlayerStatsDto {
   @Type(() => Number)
   HIGH?: number;
 
-  // ── Rebounds ─────────────────────────────────────────────────
   @ApiPropertyOptional()
   @IsOptional()
   @IsInt()
@@ -121,7 +119,6 @@ export class UpsertPlayerStatsDto {
   @Type(() => Number)
   DEF?: number;
 
-  // ── Misc ─────────────────────────────────────────────────────
   @ApiPropertyOptional()
   @IsOptional()
   @IsInt()

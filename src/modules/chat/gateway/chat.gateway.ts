@@ -44,7 +44,7 @@ export class ChatGateway
 
   private readonly logger = new Logger(ChatGateway.name);
 
-  // ── Track online users: userId → Set<socketId> ───────────────
+  // Track online users: userId → Set<socketId>
   private onlineUsers = new Map<string, Set<string>>();
 
   constructor(
@@ -53,14 +53,14 @@ export class ChatGateway
     private readonly configService: ConfigService,
   ) {}
 
-  // ─── Lifecycle ────────────────────────────────────────────────
+  // Lifecycle
   afterInit(_server: Server) {
     this.logger.log('🔌 Chat WebSocket Gateway initialized');
   }
 
   async handleConnection(client: AuthSocket) {
     try {
-      // ── Authenticate via JWT token in handshake ───────────────
+      // Authenticate via JWT token in handshake
       const token =
         client.handshake.auth?.token ??
         client.handshake.headers?.authorization?.replace('Bearer ', '');
@@ -85,28 +85,28 @@ export class ChatGateway
         username: payload.username,
       };
 
-      // ── Track online ─────────────────────────────────────────
+      // Track online
       const userId = client.user._id;
       if (!this.onlineUsers.has(userId)) {
         this.onlineUsers.set(userId, new Set());
       }
       this.onlineUsers.get(userId)!.add(client.id);
 
-      // ── Auto-join all user's conversation rooms ───────────────
+      // Auto-join all user's conversation rooms
       const rooms = await this.chatService.getUserConversationRooms(userId);
       rooms.forEach((roomId) => client.join(roomId));
 
-      // ── Join personal room (for direct notifications) ─────────
+      // Join personal room (for direct notifications)
       client.join(`user:${userId}`);
 
-      // ── Broadcast online status ───────────────────────────────
+      // Broadcast online status
       client.broadcast.emit(SocketEvent.USER_ONLINE, {
         userId,
         username: payload.username,
       });
 
       this.logger.log(
-        `✅ Client connected: ${client.id} (user: ${payload.email})`,
+        `Client connected: ${client.id} (user: ${payload.email})`,
       );
     } catch (err: any) {
       this.disconnect(client, `Auth failed: ${err?.message}`);
@@ -123,7 +123,6 @@ export class ChatGateway
       sockets.delete(client.id);
       if (sockets.size === 0) {
         this.onlineUsers.delete(userId);
-        // Broadcast offline only when all sockets for this user disconnect
         this.server.emit(SocketEvent.USER_OFFLINE, {
           userId,
           username: client.user.username,
@@ -131,10 +130,10 @@ export class ChatGateway
       }
     }
 
-    this.logger.log(`👋 Client disconnected: ${client.id}`);
+    this.logger.log(`Client disconnected: ${client.id}`);
   }
 
-  // ─── Events ───────────────────────────────────────────────────
+  // Events
 
   @SubscribeMessage(SocketEvent.JOIN_CONVERSATION)
   async handleJoin(
@@ -176,7 +175,7 @@ export class ChatGateway
         avatar: client.user.avatar,
       });
 
-      // ── Broadcast to all participants in the conversation ─────
+      // Broadcast to all participants in the conversation
       this.server.to(dto.conversationId).emit(SocketEvent.NEW_MESSAGE, message);
 
       return message;
@@ -245,22 +244,22 @@ export class ChatGateway
       .emit(SocketEvent.MESSAGE_UPDATED, updated);
   }
 
-  // ─── Helper: emit to specific user across all their sockets ──
+  // Helper: emit to specific user across all their sockets ──
   emitToUser(userId: string, event: string, data: any) {
     this.server.to(`user:${userId}`).emit(event, data);
   }
 
-  // ─── Helper: emit to conversation room ───────────────────────
+  // Helper: emit to conversation room
   emitToConversation(conversationId: string, event: string, data: any) {
     this.server.to(conversationId).emit(event, data);
   }
 
-  // ─── Helper: check if user is online ─────────────────────────
+  // Helper: check if user is online
   isUserOnline(userId: string): boolean {
     return this.onlineUsers.has(userId);
   }
 
-  // ─── Helper: get all online users ────────────────────────────
+  // Helper: get all online users
   getOnlineUsers(): string[] {
     return Array.from(this.onlineUsers.keys());
   }

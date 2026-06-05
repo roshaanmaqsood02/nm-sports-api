@@ -15,7 +15,6 @@ export type PlayerStatsDocument = PlayerStats & Document;
   },
 })
 export class PlayerStats {
-  // ── References ────────────────────────────────────────────────
   @Prop({ type: Types.ObjectId, ref: 'League', required: true, index: true })
   leagueId!: Types.ObjectId;
 
@@ -34,7 +33,6 @@ export class PlayerStats {
   @Prop({ trim: true })
   season!: string;
 
-  // ── Scoring Stats ─────────────────────────────────────────────
   // GP  — Games Played
   @Prop({ default: 0 }) GP!: number;
 
@@ -63,7 +61,6 @@ export class PlayerStats {
   // HIGH — Season High Points in a single game
   @Prop({ default: 0 }) HIGH!: number;
 
-  // ── Rebound Stats ─────────────────────────────────────────────
   // REB — Total Rebounds
   @Prop({ default: 0 }) REB!: number;
 
@@ -73,7 +70,6 @@ export class PlayerStats {
   // DEF — Defensive Rebounds
   @Prop({ default: 0 }) DEF!: number;
 
-  // ── Misc Stats ────────────────────────────────────────────────
   // AST — Total Assists
   @Prop({ default: 0 }) AST!: number;
 
@@ -86,7 +82,6 @@ export class PlayerStats {
 
 export const PlayerStatsSchema = SchemaFactory.createForClass(PlayerStats);
 
-// ─── Computed virtuals ────────────────────────────────────────────────────────
 PlayerStatsSchema.virtual('PPG').get(function (this: PlayerStatsDocument) {
   return this.GP > 0 ? +(this.PTS / this.GP).toFixed(1) : 0;
 });
@@ -123,6 +118,7 @@ PlayerStatsSchema.virtual('BLKPG').get(function (this: PlayerStatsDocument) {
   return this.GP > 0 ? +(this.BLK / this.GP).toFixed(1) : 0;
 });
 
+// Index
 PlayerStatsSchema.index({ leagueId: 1, playerId: 1 }, { unique: true });
 PlayerStatsSchema.index({ leagueId: 1, teamId: 1 });
 PlayerStatsSchema.index({ leagueId: 1, PTS: -1 });

@@ -24,16 +24,14 @@ export class OrganizationsService {
     private readonly uploadService: UploadService,
   ) {}
 
-  // ─── Helper: convert Mongoose doc to plain object ─────────────
   private toPlain(doc: OrganizationDocument): Record<string, any> {
     const plain = doc.toObject({ virtuals: true, versionKey: false });
     delete plain.__v;
     // Convert _id to string explicitly
     plain.id = plain._id?.toString();
-    return JSON.parse(JSON.stringify(plain)); // force a clean serializable object
+    return JSON.parse(JSON.stringify(plain));
   }
 
-  // ─── Create ───────────────────────────────────────────────────
   async create(
     dto: CreateOrganizationDto,
     currentUser: RequestUser,
@@ -106,7 +104,6 @@ export class OrganizationsService {
     return this.toPlain(org);
   }
 
-  // ─── Find All (paginated) ─────────────────────────────────────
   async findAll(
     page = 1,
     limit = 10,
@@ -143,7 +140,6 @@ export class OrganizationsService {
     };
   }
 
-  // ─── Find One ─────────────────────────────────────────────────
   async findOne(
     id: string,
     currentUser: RequestUser,
@@ -155,7 +151,6 @@ export class OrganizationsService {
     return this.toPlain(org);
   }
 
-  // ─── Update ───────────────────────────────────────────────────
   async update(
     id: string,
     dto: UpdateOrganizationDto,
@@ -219,7 +214,6 @@ export class OrganizationsService {
     return this.toPlain(updated!);
   }
 
-  // ─── Remove Logo ──────────────────────────────────────────────
   async removeLogo(
     id: string,
     currentUser: RequestUser,
@@ -239,7 +233,6 @@ export class OrganizationsService {
     return { message: 'Logo removed successfully' };
   }
 
-  // ─── Soft Delete ──────────────────────────────────────────────
   async remove(
     id: string,
     currentUser: RequestUser,
@@ -258,7 +251,6 @@ export class OrganizationsService {
     return { message: 'Organization deleted successfully' };
   }
 
-  // ─── Add Member ───────────────────────────────────────────────
   async addMember(
     orgId: string,
     userId: string,
@@ -273,7 +265,6 @@ export class OrganizationsService {
     return { message: 'Member added successfully' };
   }
 
-  // ─── Remove Member ────────────────────────────────────────────
   async removeMember(
     orgId: string,
     userId: string,
@@ -288,7 +279,6 @@ export class OrganizationsService {
     return { message: 'Member removed successfully' };
   }
 
-  // ─── Stats ────────────────────────────────────────────────────
   async getStats(currentUser: RequestUser) {
     const filter = currentUser.isSuperAdmin
       ? {}
@@ -303,12 +293,10 @@ export class OrganizationsService {
     return { total, active, pending };
   }
 
-  // ─── Find by ID (public — used by other modules) ──────────────
   async findById(id: string): Promise<OrganizationDocument | null> {
     return this.orgsRepository.findById(id);
   }
 
-  // ─── Verify org exists + check sport ─────────────────────────
   async validateOrgAndSport(
     organizationId: string,
     sport: string,
@@ -331,7 +319,6 @@ export class OrganizationsService {
     return org;
   }
 
-  // ─── Verify org exists + check access (no sport check) ────────
   async validateOrg(
     organizationId: string,
     user: RequestUser,
@@ -345,7 +332,6 @@ export class OrganizationsService {
     return org;
   }
 
-  // ─── Add division ref ─────────────────────────────────────────
   async addDivisionRef(
     organizationId: string,
     divisionId: string,
@@ -355,7 +341,6 @@ export class OrganizationsService {
     });
   }
 
-  // ─── Remove division ref ──────────────────────────────────────
   async removeDivisionRef(
     organizationId: string,
     divisionId: string,
@@ -365,21 +350,18 @@ export class OrganizationsService {
     });
   }
 
-  // ─── Add club ref ─────────────────────────────────────────────
   async addClubRef(organizationId: string, clubId: string): Promise<void> {
     await this.orgsRepository.update(organizationId, {
       $addToSet: { clubs: new Types.ObjectId(clubId) },
     });
   }
 
-  // ─── Remove club ref ──────────────────────────────────────────
   async removeClubRef(organizationId: string, clubId: string): Promise<void> {
     await this.orgsRepository.update(organizationId, {
       $pull: { clubs: new Types.ObjectId(clubId) },
     });
   }
 
-  // ─── Access check (private helper) ────────────────────────────
   private checkAccess(org: OrganizationDocument, user: RequestUser): void {
     if (user.isSuperAdmin) return;
     if (user.role === UserRole.ADMIN) return;

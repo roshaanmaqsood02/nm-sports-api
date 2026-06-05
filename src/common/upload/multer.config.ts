@@ -3,7 +3,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { randomUUID } from 'crypto'; // ← Node built-in, no package needed
 
-// ─── Disk storage ─────────────────────────────────────────────────────────────
+// Disk storage
 export const logoStorage = diskStorage({
   destination: (_req, _file, cb) => {
     cb(
@@ -20,7 +20,7 @@ export const logoStorage = diskStorage({
   },
 });
 
-// ─── Allowed MIME types ───────────────────────────────────────────────────────
+// Allowed MIME types
 const ALLOWED_MIME_TYPES = (
   process.env.ALLOWED_IMAGE_TYPES ??
   'image/jpeg,image/png,image/webp,image/svg+xml'
@@ -45,6 +45,6 @@ export const imageFileFilter = (
   cb(null, true);
 };
 
-// ─── Max file size in bytes ───────────────────────────────────────────────────
+// Max file size in bytes
 export const MAX_FILE_SIZE =
   parseInt(process.env.UPLOAD_MAX_SIZE_MB ?? '5', 10) * 1024 * 1024;

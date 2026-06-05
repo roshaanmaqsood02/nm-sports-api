@@ -9,9 +9,6 @@ import {
 
 export type StaffDocument = Staff & Document;
 
-// ─── Embedded: Resource Permission Entry ─────────────────────────────────────
-// Represents fine-grained permissions for a single resource
-// e.g.  { resource: 'teams', permissions: ['view','create','edit'] }
 @Schema({ _id: false })
 export class ResourcePermissionEntry {
   @Prop({
@@ -21,11 +18,9 @@ export class ResourcePermissionEntry {
   })
   resource!: StaffResource;
 
-  // Is this resource checkbox enabled at all?
   @Prop({ default: false })
   enabled!: boolean;
 
-  // Which actions are granted on this resource
   @Prop({
     type: [String],
     enum: ResourcePermission,
@@ -33,21 +28,17 @@ export class ResourcePermissionEntry {
   })
   permissions!: ResourcePermission[];
 
-  // Optional: restrict to specific IDs within the resource
-  // e.g. only these specific team IDs
   @Prop({ type: [{ type: Types.ObjectId }], default: [] })
   resourceIds!: Types.ObjectId[];
 
-  // Human-readable labels for the IDs (stored for quick display)
   @Prop({ type: [String], default: [] })
   resourceNames!: string[];
 }
 
-// ─── Embedded: Invitation ────────────────────────────────────────────────────
 @Schema({ _id: false })
 export class StaffInvitation {
   @Prop({ trim: true })
-  token?: string; // secure invitation token
+  token?: string;
 
   @Prop()
   sentAt?: Date;
@@ -62,7 +53,6 @@ export class StaffInvitation {
   accepted!: boolean;
 }
 
-// ─── Main Staff Schema ────────────────────────────────────────────────────────
 @Schema({
   timestamps: true,
   collection: 'staff',
@@ -75,7 +65,6 @@ export class StaffInvitation {
   },
 })
 export class Staff {
-  // ── Identity ─────────────────────────────────────────────────
   @Prop({ required: true, trim: true })
   firstName!: string;
 
@@ -91,7 +80,6 @@ export class Staff {
   })
   email!: string;
 
-  // ── Organization ref ──────────────────────────────────────────
   @Prop({
     type: Types.ObjectId,
     ref: 'Organization',
@@ -100,16 +88,12 @@ export class Staff {
   })
   organizationId!: Types.ObjectId;
 
-  // ── Linked user account (populated after invitation accepted) ─
   @Prop({ type: Types.ObjectId, ref: 'User', index: true })
   userId?: Types.ObjectId;
 
-  // ── Role (optional label) ─────────────────────────────────────
-  // e.g. 'Head Coach', 'Team Manager', 'Analyst'
   @Prop({ trim: true, maxlength: 100 })
   role?: string;
 
-  // ── Org Access ───────────────────────────────────────────────
   @Prop({
     type: String,
     enum: OrgAccessType,
@@ -118,19 +102,15 @@ export class Staff {
   })
   orgAccess!: OrgAccessType;
 
-  // ── Resource Permissions ──────────────────────────────────────
-  // One entry per resource (organization, teams, players, leagues)
   @Prop({
     type: [ResourcePermissionEntry],
     default: [],
   })
   resourcePermissions!: ResourcePermissionEntry[];
 
-  // ── Invitation ───────────────────────────────────────────────
   @Prop({ type: StaffInvitation, default: {} })
   invitation!: StaffInvitation;
 
-  // ── Status ───────────────────────────────────────────────────
   @Prop({
     type: String,
     enum: StaffStatus,
@@ -139,22 +119,18 @@ export class Staff {
   })
   status!: StaffStatus;
 
-  // ── Notes ────────────────────────────────────────────────────
   @Prop({ trim: true, maxlength: 500 })
   notes?: string;
 
-  // ── Ownership (always superadmin) ────────────────────────────
   @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
   createdBy!: Types.ObjectId;
 
-  // ── Soft Delete ───────────────────────────────────────────────
   @Prop({ default: false }) isDeleted!: boolean;
   @Prop() deletedAt?: Date;
 }
 
 export const StaffSchema = SchemaFactory.createForClass(Staff);
 
-// ─── Virtuals ─────────────────────────────────────────────────────────────────
 StaffSchema.virtual('fullName').get(function (this: StaffDocument) {
   return `${this.firstName} ${this.lastName}`;
 });
@@ -167,7 +143,7 @@ StaffSchema.virtual('isFullAccess').get(function (this: StaffDocument) {
   return this.orgAccess === OrgAccessType.FULL_ACCESS;
 });
 
-// ─── Indexes ──────────────────────────────────────────────────────────────────
+// Indexes
 StaffSchema.index({ organizationId: 1, email: 1 }, { unique: true });
 StaffSchema.index({ organizationId: 1, status: 1 });
 StaffSchema.index({ organizationId: 1, orgAccess: 1 });

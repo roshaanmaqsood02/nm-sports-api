@@ -107,7 +107,6 @@ export class PlayersRepository {
       .exec();
   }
 
-  // ─── Injury helpers ───────────────────────────────────────────
   async addInjury(
     playerId: string,
     injury: Record<string, any>,
@@ -170,7 +169,6 @@ export class PlayersRepository {
       .exec();
   }
 
-  // ─── Expiring contracts ───────────────────────────────────────
   async findExpiringContracts(days: number): Promise<PlayerDocument[]> {
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + days);
@@ -187,20 +185,18 @@ export class PlayersRepository {
       .exec();
   }
 
-  // ─── Find by team ─────────────────────────────────────────────
   async findByTeam(teamId: string): Promise<PlayerDocument[]> {
     return this.playerModel
       .find({
         currentTeamId: new Types.ObjectId(teamId),
         isDeleted: false,
-        status: PlayerStatus.ACTIVE, // Use enum instead of string
+        status: PlayerStatus.ACTIVE,
       })
       .populate('userId', 'email username profile')
       .sort({ jerseyNumber: 1 })
       .exec();
   }
 
-  // ─── Find by organization ─────────────────────────────────────
   async findByOrganization(orgId: string): Promise<PlayerDocument[]> {
     return this.playerModel
       .find({

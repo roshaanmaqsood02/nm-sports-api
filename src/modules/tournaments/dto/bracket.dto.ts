@@ -42,7 +42,6 @@ export class CreateBracketMatchDto {
   @MaxLength(5)
   group?: string;
 
-  // ── Team A ────────────────────────────────────────────────────
   @ApiPropertyOptional({ example: '64abc123def457' })
   @IsOptional()
   @IsMongoId()
@@ -60,7 +59,6 @@ export class CreateBracketMatchDto {
   @MaxLength(8)
   teamAAbbreviation?: string;
 
-  // ── Team B ────────────────────────────────────────────────────
   @ApiPropertyOptional({ example: '64abc123def458' })
   @IsOptional()
   @IsMongoId()

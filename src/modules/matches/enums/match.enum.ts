@@ -21,7 +21,6 @@ export enum MatchType {
 }
 
 export enum MatchEventType {
-  // ── Universal ──────────────────────────────────────────────
   GOAL = 'goal',
   ASSIST = 'assist',
   YELLOW_CARD = 'yellow_card',
@@ -34,19 +33,16 @@ export enum MatchEventType {
   HALFTIME = 'halftime',
   FULLTIME = 'fulltime',
 
-  // ── Cricket ────────────────────────────────────────────────
   WICKET = 'wicket',
   BOUNDARY_4 = 'boundary_4',
   BOUNDARY_6 = 'boundary_6',
   OVER_COMPLETE = 'over_complete',
   DRINKS_BREAK = 'drinks_break',
 
-  // ── Basketball ─────────────────────────────────────────────
   TIMEOUT = 'timeout',
   FOUL = 'foul',
   FREE_THROW = 'free_throw',
 
-  // ── General ────────────────────────────────────────────────
   NOTE = 'note',
 }
 

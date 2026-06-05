@@ -16,7 +16,6 @@ export type GameScheduleDocument = GameSchedule & Document;
   },
 })
 export class GameSchedule {
-  // ── League reference ──────────────────────────────────────────
   @Prop({
     type: Types.ObjectId,
     ref: 'League',
@@ -28,7 +27,6 @@ export class GameSchedule {
   @Prop({ trim: true })
   season!: string;
 
-  // ── Visitor (Away) Team ───────────────────────────────────────
   @Prop({ type: Types.ObjectId, ref: 'Team', required: true })
   visitorTeamId!: Types.ObjectId;
 
@@ -40,7 +38,6 @@ export class GameSchedule {
 
   @Prop({ default: 0 }) visitorScore!: number;
 
-  // ── Home Team ─────────────────────────────────────────────────
   @Prop({ type: Types.ObjectId, ref: 'Team', required: true })
   homeTeamId!: Types.ObjectId;
 
@@ -52,7 +49,6 @@ export class GameSchedule {
 
   @Prop({ default: 0 }) homeScore!: number;
 
-  // ── Location ─────────────────────────────────────────────────
   @Prop({ required: true, trim: true })
   location!: string;
 
@@ -65,14 +61,12 @@ export class GameSchedule {
   @Prop({ trim: true })
   country?: string;
 
-  // ── Schedule ─────────────────────────────────────────────────
   @Prop({ required: true, index: true })
   scheduledAt!: Date;
 
   @Prop() startedAt?: Date;
   @Prop() endedAt?: Date;
 
-  // ── Status ───────────────────────────────────────────────────
   @Prop({
     type: String,
     enum: GameStatus,
@@ -84,7 +78,6 @@ export class GameSchedule {
   @Prop({ trim: true, maxlength: 300 })
   notes?: string;
 
-  // ── Quarter / Period Scores ───────────────────────────────────
   @Prop({ default: 0 }) visitorQ1!: number;
   @Prop({ default: 0 }) visitorQ2!: number;
   @Prop({ default: 0 }) visitorOT!: number;

@@ -65,7 +65,6 @@ export class UpdateMatchDto extends PartialType(CreateMatchDto) {
   durationMinutes?: number;
 }
 
-// ─── Update Score ─────────────────────────────────────────────────────────────
 export class UpdateScoreDto {
   @ApiPropertyOptional({ example: 3 })
   @IsOptional()
@@ -188,7 +187,6 @@ export class UpdateScoreDto {
   awayQ4?: number;
 }
 
-// ─── Add Match Event ──────────────────────────────────────────────────────────
 export class AddMatchEventDto {
   @ApiProperty({ enum: MatchEventType, example: MatchEventType.GOAL })
   @IsEnum(MatchEventType)
@@ -246,7 +244,6 @@ export class AddMatchEventDto {
   scoreSnapshot?: string;
 }
 
-// ─── Add Player Performance ───────────────────────────────────────────────────
 export class AddPlayerPerformanceDto {
   @ApiProperty({ example: '64abc123def456' })
   @IsMongoId()
@@ -334,7 +331,6 @@ export class AddPlayerPerformanceDto {
   notes?: string;
 }
 
-// ─── Query ────────────────────────────────────────────────────────────────────
 export class QueryMatchDto {
   @ApiPropertyOptional()
   @IsOptional()

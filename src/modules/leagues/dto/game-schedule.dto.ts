@@ -24,7 +24,6 @@ export class CreateGameScheduleDto {
   @IsNotEmpty()
   season!: string;
 
-  // ── Visitor Team ─────────────────────────────────────────────
   @ApiProperty({ example: '64abc123def457' })
   @IsMongoId()
   @IsNotEmpty()
@@ -42,7 +41,6 @@ export class CreateGameScheduleDto {
   @MaxLength(8)
   visitorTeamAbbreviation?: string;
 
-  // ── Home Team ─────────────────────────────────────────────────
   @ApiProperty({ example: '64abc123def458' })
   @IsMongoId()
   @IsNotEmpty()
@@ -60,7 +58,6 @@ export class CreateGameScheduleDto {
   @MaxLength(8)
   homeTeamAbbreviation?: string;
 
-  // ── Location ─────────────────────────────────────────────────
   @ApiProperty({ example: 'Gaddafi Stadium, Lahore' })
   @IsString()
   @IsNotEmpty()
@@ -85,12 +82,10 @@ export class CreateGameScheduleDto {
   @MaxLength(100)
   country?: string;
 
-  // ── Date / Time ───────────────────────────────────────────────
   @ApiProperty({ example: '2025-03-15T18:00:00.000Z' })
   @IsDateString()
   scheduledAt!: string;
 
-  // ── Notes ────────────────────────────────────────────────────
   @ApiPropertyOptional({ example: 'Championship game' })
   @IsOptional()
   @IsString()

@@ -17,10 +17,6 @@ export class ChatRepository {
     private readonly messageModel: Model<MessageDocument>,
   ) {}
 
-  // ══════════════════════════════════════════════════════════════
-  // CONVERSATION
-  // ══════════════════════════════════════════════════════════════
-
   async createConversation(
     data: Partial<Conversation>,
   ): Promise<ConversationDocument> {
@@ -189,10 +185,6 @@ export class ChatRepository {
       isDeleted: false,
     });
   }
-
-  // ══════════════════════════════════════════════════════════════
-  // MESSAGES
-  // ══════════════════════════════════════════════════════════════
 
   async createMessage(data: Partial<Message>): Promise<MessageDocument> {
     return new this.messageModel(data).save();

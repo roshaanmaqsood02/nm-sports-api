@@ -20,7 +20,6 @@ import {
 } from '../enums/organization.enum';
 
 export class CreateOrganizationDto {
-  // ── Identity ─────────────────────────────────────────────────
   @ApiProperty({ example: 'Lahore Lions Sports Club' })
   @IsString()
   @IsNotEmpty()
@@ -42,11 +41,6 @@ export class CreateOrganizationDto {
   @Transform(({ value }) => value?.toUpperCase().trim())
   acronym?: string;
 
-  // ── Sports ────────────────────────────────────────────────────
-  // multipart/form-data sends arrays as:
-  //   - a single comma-separated string: "cricket,football"
-  //   - repeated fields:                 sports=cricket&sports=football
-  // This transform normalises both into a proper string[]
   @ApiProperty({
     enum: SportType,
     isArray: true,
@@ -67,7 +61,6 @@ export class CreateOrganizationDto {
   @IsEnum(SportType, { each: true })
   sports!: SportType[];
 
-  // ── Contact ──────────────────────────────────────────────────
   @ApiPropertyOptional({ example: 'contact@lahore-lions.com' })
   @IsOptional()
   @IsEmail({}, { message: 'Please provide a valid email address' })
@@ -85,7 +78,6 @@ export class CreateOrganizationDto {
   @IsUrl({}, { message: 'Please provide a valid URL including https://' })
   website?: string;
 
-  // ── Location ─────────────────────────────────────────────────
   @ApiProperty({ example: '123 Main Street, Gulberg III' })
   @IsString()
   @IsNotEmpty()
@@ -124,7 +116,6 @@ export class CreateOrganizationDto {
   @Transform(({ value }) => value?.trim())
   zipCode!: string;
 
-  // ── Settings ─────────────────────────────────────────────────
   @ApiPropertyOptional({
     enum: OrgTimezone,
     default: OrgTimezone.UTC,

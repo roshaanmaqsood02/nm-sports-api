@@ -21,7 +21,6 @@ export class UpdateStaffDto extends PartialType(CreateStaffDto) {
   status?: StaffStatus;
 }
 
-// ─── Update resource permissions only ────────────────────────────────────────
 export class UpdatePermissionsDto {
   @ApiPropertyOptional({
     enum: OrgAccessType,
@@ -42,7 +41,6 @@ export class UpdatePermissionsDto {
   resourcePermissions?: ResourcePermissionDto[];
 }
 
-// ─── Resend invitation ────────────────────────────────────────────────────────
 export class ResendInvitationDto {
   @ApiPropertyOptional({
     example: '64abc123def456',
@@ -52,7 +50,6 @@ export class ResendInvitationDto {
   staffId!: string;
 }
 
-// ─── Accept invitation ────────────────────────────────────────────────────────
 export class AcceptInvitationDto {
   @ApiPropertyOptional({ example: 'abc123token' })
   @IsString()

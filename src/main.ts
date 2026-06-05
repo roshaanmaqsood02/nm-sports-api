@@ -99,6 +99,7 @@ async function bootstrap() {
       .addTag('Roles', 'Role management')
       .addTag('Permissions', 'Permission management')
       .addTag('Organizations', 'Organization management')
+      .addTag('Registrations', 'Multi-step organization registration form')
       .addTag('Teams', 'Team management — roster, stats, logo')
       .addTag('Players', 'Player profiles — injuries, stats, transfers')
       .addTag(
@@ -119,6 +120,10 @@ async function bootstrap() {
       .addTag(
         'Seasons',
         'Season management — subseasons, game ID generation, seeds',
+      )
+      .addTag(
+        'Websites',
+        'Website template activation and custom website requests',
       )
       .addTag('Audit', 'Audit log queries')
       .build();

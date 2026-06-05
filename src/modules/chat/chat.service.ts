@@ -39,15 +39,10 @@ export class ChatService {
 
   constructor(private readonly repo: ChatRepository) {}
 
-  // ══════════════════════════════════════════════════════════════
-  // CONVERSATIONS
-  // ══════════════════════════════════════════════════════════════
-
   async createConversation(
     dto: CreateConversationDto,
     user: RequestUser,
   ): Promise<ConversationDocument> {
-    // ── Direct: check if already exists ─────────────────────────
     if (dto.type === ConversationType.DIRECT) {
       if (dto.participantIds.length !== 1) {
         throw new BadRequestException(
@@ -60,10 +55,9 @@ export class ChatService {
         dto.participantIds[0],
       );
 
-      if (existing) return existing; // return existing DM
+      if (existing) return existing;
     }
 
-    // ── Build participants array ──────────────────────────────────
     const allParticipantIds = [
       user._id,
       ...dto.participantIds.filter((id) => id !== user._id),
@@ -94,7 +88,7 @@ export class ChatService {
       createdBy: new Types.ObjectId(user._id),
     });
 
-    // ── System message: "Group created" ──────────────────────────
+    // System message: "Group created"
     if (dto.type !== ConversationType.DIRECT) {
       await this.repo.createMessage({
         conversationId: conversation._id as any,
@@ -234,15 +228,11 @@ export class ChatService {
     return { message: 'Left conversation successfully' };
   }
 
-  // ── Get room IDs for a user (used by gateway on connect) ──────
+  // Get room IDs for a user (used by gateway on connect)
   async getUserConversationRooms(userId: string): Promise<string[]> {
     const { data } = await this.repo.findUserConversations(userId, 1, 200);
     return data.map((c) => (c._id as any).toString());
   }
-
-  // ══════════════════════════════════════════════════════════════
-  // MESSAGES
-  // ══════════════════════════════════════════════════════════════
 
   async sendMessage(
     dto: SendMessageDto,
@@ -415,7 +405,7 @@ export class ChatService {
     return this.repo.searchMessages(conversationId, query);
   }
 
-  // ── Online users ──────────────────────────────────────────────
+  // Online users
   getOnlineStatus(
     userIds: string[],
     onlineUsers: string[],
@@ -429,7 +419,7 @@ export class ChatService {
     );
   }
 
-  // ─── Access helpers ───────────────────────────────────────────
+  // Access helpers
   private checkParticipant(conv: ConversationDocument, userId: string): void {
     const isParticipant = conv.participants.some(
       (p) => p.userId.toString() === userId && !p.hasLeft,

@@ -36,7 +36,6 @@ export class MatchesService {
     private readonly teamsRepository: TeamsRepository,
   ) {}
 
-  // ─── Create ───────────────────────────────────────────────────
   async create(
     dto: CreateMatchDto,
     currentUser: RequestUser,
@@ -128,7 +127,7 @@ export class MatchesService {
         name: dto.venueName,
         city: dto.venueCity,
         country: dto.venueCountry,
-        type: dto.venueType ?? MatchVenueType.NEUTRAL, // Provide default value
+        type: dto.venueType ?? MatchVenueType.NEUTRAL,
         capacity: dto.venueCapacity,
       },
 
@@ -156,7 +155,6 @@ export class MatchesService {
     return match;
   }
 
-  // ─── Find All ─────────────────────────────────────────────────
   async findAll(query: QueryMatchDto, currentUser: RequestUser) {
     const {
       page = 1,
@@ -231,7 +229,6 @@ export class MatchesService {
     };
   }
 
-  // ─── Find One ─────────────────────────────────────────────────
   async findOne(id: string, currentUser: RequestUser): Promise<MatchDocument> {
     const match = await this.matchesRepository.findById(id);
     if (!match) throw new NotFoundException(`Match ${id} not found`);
@@ -239,7 +236,6 @@ export class MatchesService {
     return match;
   }
 
-  // ─── Update ───────────────────────────────────────────────────
   async update(
     id: string,
     dto: UpdateMatchDto,
@@ -321,7 +317,6 @@ export class MatchesService {
     return updated!;
   }
 
-  // ─── Update Score ─────────────────────────────────────────────
   async updateScore(
     id: string,
     dto: UpdateScoreDto,
@@ -379,7 +374,6 @@ export class MatchesService {
     return updated!;
   }
 
-  // ─── Finalise Result ──────────────────────────────────────────
   async finalise(id: string, currentUser: RequestUser): Promise<MatchDocument> {
     const match = await this.matchesRepository.findById(id);
     if (!match) throw new NotFoundException(`Match ${id} not found`);
@@ -413,7 +407,6 @@ export class MatchesService {
     return updated!;
   }
 
-  // ─── Add Event ────────────────────────────────────────────────
   async addEvent(
     id: string,
     dto: AddMatchEventDto,
@@ -446,7 +439,6 @@ export class MatchesService {
     return updated!;
   }
 
-  // ─── Remove Event ─────────────────────────────────────────────
   async removeEvent(
     matchId: string,
     eventId: string,
@@ -467,7 +459,6 @@ export class MatchesService {
     return updated!;
   }
 
-  // ─── Upsert Player Performance ────────────────────────────────
   async upsertPerformance(
     matchId: string,
     dto: AddPlayerPerformanceDto,
@@ -508,19 +499,16 @@ export class MatchesService {
     return updated!;
   }
 
-  // ─── Upcoming Matches ─────────────────────────────────────────
   async getUpcoming(limit = 5, currentUser: RequestUser) {
     const filter = this.buildOrgFilter(currentUser);
     return this.matchesRepository.findUpcoming(filter, limit);
   }
 
-  // ─── Live Matches ─────────────────────────────────────────────
   async getLive(currentUser: RequestUser) {
     const filter = this.buildOrgFilter(currentUser);
     return this.matchesRepository.findLive(filter);
   }
 
-  // ─── Head to Head ─────────────────────────────────────────────
   async getHeadToHead(
     teamAId: string,
     teamBId: string,
@@ -560,13 +548,11 @@ export class MatchesService {
     };
   }
 
-  // ─── Stats ────────────────────────────────────────────────────
   async getStats(currentUser: RequestUser) {
     const filter = this.buildOrgFilter(currentUser);
     return this.matchesRepository.getStatsSummary(filter);
   }
 
-  // ─── Delete ───────────────────────────────────────────────────
   async remove(
     id: string,
     currentUser: RequestUser,
@@ -584,7 +570,6 @@ export class MatchesService {
     return { message: 'Match deleted successfully' };
   }
 
-  // ─── Access helpers ───────────────────────────────────────────
   private checkAccess(match: MatchDocument, user: RequestUser): void {
     if (user.isSuperAdmin) return;
     if (user.role === UserRole.ADMIN) return;

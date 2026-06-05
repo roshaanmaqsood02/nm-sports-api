@@ -31,10 +31,6 @@ export class LeaguesRepository {
     private readonly teamStatsModel: Model<TeamStatsDocument>,
   ) {}
 
-  // ══════════════════════════════════════════════════════════════
-  // LEAGUE CRUD
-  // ══════════════════════════════════════════════════════════════
-
   async createLeague(data: Partial<League>): Promise<LeagueDocument> {
     return new this.leagueModel(data).save();
   }
@@ -88,10 +84,6 @@ export class LeaguesRepository {
   async leagueExists(filter: Record<string, any>): Promise<boolean> {
     return !!(await this.leagueModel.exists({ ...filter, isDeleted: false }));
   }
-
-  // ══════════════════════════════════════════════════════════════
-  // GAME SCHEDULE
-  // ══════════════════════════════════════════════════════════════
 
   async createGame(data: Partial<GameSchedule>): Promise<GameScheduleDocument> {
     return new this.gameModel(data).save();
@@ -162,10 +154,6 @@ export class LeaguesRepository {
     );
   }
 
-  // ══════════════════════════════════════════════════════════════
-  // PLAYER STATS
-  // ══════════════════════════════════════════════════════════════
-
   async upsertPlayerStats(
     leagueId: string,
     playerId: string,
@@ -213,7 +201,7 @@ export class LeaguesRepository {
 
     // Map virtual sort fields to stored fields
     const sortFieldMap: Record<string, string> = {
-      PPG: 'PTS', // sort by PTS (PPG is virtual)
+      PPG: 'PTS',
       RPG: 'REB',
       APG: 'AST',
       SPG: 'STL',
@@ -238,10 +226,6 @@ export class LeaguesRepository {
 
     return { data, total };
   }
-
-  // ══════════════════════════════════════════════════════════════
-  // TEAM STATS
-  // ══════════════════════════════════════════════════════════════
 
   async upsertTeamStats(
     leagueId: string,

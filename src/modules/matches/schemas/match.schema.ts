@@ -11,7 +11,6 @@ import {
 
 export type MatchDocument = Match & Document;
 
-// ─── Embedded: Team Score ─────────────────────────────────────────────────────
 @Schema({ _id: false })
 export class TeamScore {
   @Prop({ type: Types.ObjectId, ref: 'Team', required: true })
@@ -23,8 +22,7 @@ export class TeamScore {
   @Prop({ trim: true })
   teamAcronym?: string;
 
-  // ── Score fields (sport-specific) ──────────────────────────
-  @Prop({ default: 0 }) score!: number; // goals/points/runs
+  @Prop({ default: 0 }) score!: number;
 
   // Football extras
   @Prop({ default: 0 }) penaltyScore!: number;
@@ -34,7 +32,7 @@ export class TeamScore {
   @Prop({ default: 0 }) wickets!: number;
   @Prop({ default: 0 }) overs!: number;
   @Prop({ default: 0 }) extras!: number;
-  @Prop({ trim: true }) inningsSummary?: string; // e.g. '245/6 (45.2 ov)'
+  @Prop({ trim: true }) inningsSummary?: string;
 
   // Basketball extras
   @Prop({ default: 0 }) q1Score!: number;
@@ -49,7 +47,6 @@ export class TeamScore {
   @Prop({ default: 0 }) redCards!: number;
 }
 
-// ─── Embedded: Match Event (timeline) ────────────────────────────────────────
 @Schema({ _id: true, timestamps: { createdAt: true, updatedAt: false } })
 export class MatchEvent {
   @Prop({
@@ -59,7 +56,6 @@ export class MatchEvent {
   })
   eventType!: MatchEventType;
 
-  // Minute of match e.g. 45, 90+3
   @Prop({ trim: true })
   minute?: string;
 
@@ -70,14 +66,12 @@ export class MatchEvent {
   @Prop({ trim: true })
   playerName?: string;
 
-  // Secondary player (assist, substitution-in)
   @Prop({ type: Types.ObjectId, ref: 'Player' })
   secondaryPlayerId?: Types.ObjectId;
 
   @Prop({ trim: true })
   secondaryPlayerName?: string;
 
-  // Which team the event belongs to
   @Prop({ type: Types.ObjectId, ref: 'Team' })
   teamId?: Types.ObjectId;
 
@@ -89,12 +83,11 @@ export class MatchEvent {
 
   // Score snapshot AT this event
   @Prop({ trim: true })
-  scoreSnapshot?: string; // e.g. '2-1'
+  scoreSnapshot?: string;
 }
 
 export const MatchEventSchema = SchemaFactory.createForClass(MatchEvent);
 
-// ─── Embedded: Player Performance (per-match stats) ──────────────────────────
 @Schema({ _id: true })
 export class PlayerPerformance {
   @Prop({ type: Types.ObjectId, ref: 'Player', required: true })
@@ -115,7 +108,7 @@ export class PlayerPerformance {
   @Prop({ default: 0 }) assists!: number;
   @Prop({ default: 0 }) yellowCards!: number;
   @Prop({ default: 0 }) redCards!: number;
-  @Prop({ default: 0 }) rating?: number; // 0-10
+  @Prop({ default: 0 }) rating?: number;
 
   // Cricket
   @Prop({ default: 0 }) runsScored!: number;
@@ -137,7 +130,6 @@ export class PlayerPerformance {
 export const PlayerPerformanceSchema =
   SchemaFactory.createForClass(PlayerPerformance);
 
-// ─── Embedded: Venue ─────────────────────────────────────────────────────────
 @Schema({ _id: false })
 export class MatchVenue {
   @Prop({ trim: true })
@@ -156,7 +148,6 @@ export class MatchVenue {
   capacity?: number;
 }
 
-// ─── Embedded: Officials ─────────────────────────────────────────────────────
 @Schema({ _id: false })
 export class MatchOfficials {
   @Prop({ trim: true }) referee?: string;
@@ -167,16 +158,14 @@ export class MatchOfficials {
   @Prop({ trim: true }) umpire2?: string;
 }
 
-// ─── Embedded: Weather ───────────────────────────────────────────────────────
 @Schema({ _id: false })
 export class MatchWeather {
-  @Prop({ trim: true }) condition?: string; // 'Sunny', 'Rainy', 'Overcast'
+  @Prop({ trim: true }) condition?: string;
   @Prop() temperatureCelsius?: number;
   @Prop({ trim: true }) windSpeed?: string;
   @Prop({ trim: true }) humidity?: string;
 }
 
-// ─── Main Match Schema ────────────────────────────────────────────────────────
 @Schema({
   timestamps: true,
   collection: 'matches',
@@ -189,14 +178,12 @@ export class MatchWeather {
   },
 })
 export class Match {
-  // ── Identity ─────────────────────────────────────────────────
   @Prop({ trim: true })
-  title?: string; // e.g. 'PSL Final 2025'
+  title?: string;
 
   @Prop({ trim: true })
-  matchNumber?: string; // e.g. 'Match 42', 'QF-1'
+  matchNumber?: string;
 
-  // ── Organization ─────────────────────────────────────────────
   @Prop({
     type: Types.ObjectId,
     ref: 'Organization',
@@ -205,26 +192,21 @@ export class Match {
   })
   organizationId!: Types.ObjectId;
 
-  // ── Tournament reference (optional) ──────────────────────────
   @Prop({ type: Types.ObjectId, ref: 'Tournament', index: true })
   tournamentId?: Types.ObjectId;
 
-  // ── Sport ────────────────────────────────────────────────────
   @Prop({ type: String, enum: SportType, required: true, index: true })
   sport!: SportType;
 
-  // ── Match Type ───────────────────────────────────────────────
   @Prop({ type: String, enum: MatchType, default: MatchType.FRIENDLY })
   matchType!: MatchType;
 
-  // ── Teams ────────────────────────────────────────────────────
   @Prop({ type: TeamScore, required: true })
   homeTeam!: TeamScore;
 
   @Prop({ type: TeamScore, required: true })
   awayTeam!: TeamScore;
 
-  // ── Schedule ─────────────────────────────────────────────────
   @Prop({ required: true, index: true })
   scheduledAt!: Date;
 
@@ -234,41 +216,33 @@ export class Match {
   @Prop()
   endedAt?: Date;
 
-  // Duration in minutes
   @Prop()
   durationMinutes?: number;
 
-  // ── Venue ────────────────────────────────────────────────────
   @Prop({ type: MatchVenue, default: {} })
   venue!: MatchVenue;
 
-  // ── Officials ────────────────────────────────────────────────
   @Prop({ type: MatchOfficials, default: {} })
   officials!: MatchOfficials;
 
-  // ── Weather ──────────────────────────────────────────────────
   @Prop({ type: MatchWeather, default: {} })
   weather!: MatchWeather;
 
-  // ── Result ───────────────────────────────────────────────────
   @Prop({ type: String, enum: MatchResultType })
   result?: MatchResultType;
 
   @Prop({ trim: true })
-  resultNotes?: string; // e.g. 'Won on penalties'
+  resultNotes?: string;
 
   @Prop({ default: 0 })
   attendance?: number;
 
-  // ── Events Timeline ──────────────────────────────────────────
   @Prop({ type: [MatchEventSchema], default: [] })
   events!: MatchEvent[];
 
-  // ── Player Performances ───────────────────────────────────────
   @Prop({ type: [PlayerPerformanceSchema], default: [] })
   performances!: PlayerPerformance[];
 
-  // ── Status ───────────────────────────────────────────────────
   @Prop({
     type: String,
     enum: MatchStatus,
@@ -277,22 +251,18 @@ export class Match {
   })
   status!: MatchStatus;
 
-  // ── Notes ────────────────────────────────────────────────────
   @Prop({ trim: true, maxlength: 1000 })
   notes?: string;
 
-  // ── Ownership ────────────────────────────────────────────────
   @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
   createdBy!: Types.ObjectId;
 
-  // ── Soft Delete ───────────────────────────────────────────────
   @Prop({ default: false }) isDeleted!: boolean;
   @Prop() deletedAt?: Date;
 }
 
 export const MatchSchema = SchemaFactory.createForClass(Match);
 
-// ─── Virtuals ─────────────────────────────────────────────────────────────────
 MatchSchema.virtual('scoreline').get(function (this: MatchDocument) {
   if (!this.homeTeam || !this.awayTeam) return null;
   return `${this.homeTeam.teamName} ${this.homeTeam.score} - ${this.awayTeam.score} ${this.awayTeam.teamName}`;
@@ -306,7 +276,7 @@ MatchSchema.virtual('eventCount').get(function (this: MatchDocument) {
   return this.events?.length ?? 0;
 });
 
-// ─── Indexes ──────────────────────────────────────────────────────────────────
+// Indexes
 MatchSchema.index({ organizationId: 1, scheduledAt: -1 });
 MatchSchema.index({ organizationId: 1, status: 1 });
 MatchSchema.index({ 'homeTeam.teamId': 1, scheduledAt: -1 });

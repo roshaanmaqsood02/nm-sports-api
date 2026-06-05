@@ -40,7 +40,6 @@ export class UpsertTeamStatsDto {
   @IsString()
   season?: string;
 
-  // ── Record ───────────────────────────────────────────────────
   @ApiPropertyOptional()
   @IsOptional()
   @IsInt()
@@ -90,7 +89,6 @@ export class UpsertTeamStatsDto {
   @Type(() => Number)
   totalScore?: number;
 
-  // ── Scoring ──────────────────────────────────────────────────
   @ApiPropertyOptional()
   @IsOptional()
   @IsInt()
@@ -134,7 +132,6 @@ export class UpsertTeamStatsDto {
   @Type(() => Number)
   ThreePA?: number;
 
-  // ── Rebounds ─────────────────────────────────────────────────
   @ApiPropertyOptional()
   @IsOptional()
   @IsInt()
@@ -154,7 +151,6 @@ export class UpsertTeamStatsDto {
   @Type(() => Number)
   DEF?: number;
 
-  // ── Misc ─────────────────────────────────────────────────────
   @ApiPropertyOptional()
   @IsOptional()
   @IsInt()

@@ -36,22 +36,15 @@ export class StaffService {
     private readonly orgsService: OrganizationsService,
   ) {}
 
-  // ══════════════════════════════════════════════════════════════
-  // CREATE — superadmin only
-  // ══════════════════════════════════════════════════════════════
-
   async create(dto: CreateStaffDto, user: RequestUser): Promise<StaffDocument> {
-    // ── Superadmin guard ────────────────────────────────────────
     if (!user.isSuperAdmin) {
       throw new ForbiddenException(
         'Only Super Admins can create staff members',
       );
     }
 
-    // ── Validate org ────────────────────────────────────────────
     await this.orgsService.validateOrg(dto.organizationId, user);
 
-    // ── Duplicate check ──────────────────────────────────────────
     const exists = await this.repo.findByEmail(dto.email, dto.organizationId);
     if (exists) {
       throw new ConflictException(
@@ -59,16 +52,11 @@ export class StaffService {
       );
     }
 
-    // ── Build resource permissions ───────────────────────────────
-    // For FULL_ACCESS — auto-generate all permissions on all resources
-    // For LIMITED    — use what was provided
-    // For NO_ACCESS  — empty array
     const resourcePermissions = this.buildResourcePermissions(
       dto.orgAccess,
       dto.resourcePermissions,
     );
 
-    // ── Generate invitation token ────────────────────────────────
     const inviteToken = crypto.randomBytes(32).toString('hex');
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
@@ -92,7 +80,7 @@ export class StaffService {
     });
 
     this.logger.log(
-      `✅ Staff created: "${staff.email}" ` +
+      `Staff created: "${staff.email}" ` +
         `(${dto.orgAccess}) by ${user.email}`,
     );
 
@@ -101,10 +89,6 @@ export class StaffService {
 
     return staff;
   }
-
-  // ══════════════════════════════════════════════════════════════
-  // READ
-  // ══════════════════════════════════════════════════════════════
 
   async findAll(
     organizationId: string,
@@ -117,7 +101,6 @@ export class StaffService {
       search?: string;
     } = {},
   ) {
-    // ── Superadmin or admin only ─────────────────────────────────
     if (!user.isSuperAdmin && user.role !== UserRole.ADMIN) {
       throw new ForbiddenException('Only admins can view staff members');
     }
@@ -157,10 +140,6 @@ export class StaffService {
     return staff;
   }
 
-  // ══════════════════════════════════════════════════════════════
-  // UPDATE
-  // ══════════════════════════════════════════════════════════════
-
   async update(
     id: string,
     dto: UpdateStaffDto,
@@ -198,7 +177,6 @@ export class StaffService {
     return updated!;
   }
 
-  // ── Update permissions only ───────────────────────────────────
   async updatePermissions(
     id: string,
     dto: UpdatePermissionsDto,
@@ -231,10 +209,6 @@ export class StaffService {
     this.logger.log(`Permissions updated for staff ${id} → ${newAccess}`);
     return updated!;
   }
-
-  // ══════════════════════════════════════════════════════════════
-  // INVITATION
-  // ══════════════════════════════════════════════════════════════
 
   async resendInvitation(
     id: string,
@@ -296,10 +270,6 @@ export class StaffService {
     return { message: 'Invitation accepted successfully' };
   }
 
-  // ══════════════════════════════════════════════════════════════
-  // SUSPEND / ACTIVATE
-  // ══════════════════════════════════════════════════════════════
-
   async suspend(id: string, user: RequestUser): Promise<StaffDocument> {
     if (!user.isSuperAdmin) {
       throw new ForbiddenException(
@@ -340,10 +310,6 @@ export class StaffService {
     return updated!;
   }
 
-  // ══════════════════════════════════════════════════════════════
-  // DELETE
-  // ══════════════════════════════════════════════════════════════
-
   async remove(id: string, user: RequestUser): Promise<{ message: string }> {
     if (!user.isSuperAdmin) {
       throw new ForbiddenException(
@@ -358,10 +324,6 @@ export class StaffService {
     this.logger.log(`Staff deleted: ${id} by ${user.email}`);
     return { message: 'Staff member removed successfully' };
   }
-
-  // ══════════════════════════════════════════════════════════════
-  // STATS
-  // ══════════════════════════════════════════════════════════════
 
   async getStats(organizationId: string, user: RequestUser) {
     this.guardAdminOrSuper(user);
@@ -380,10 +342,6 @@ export class StaffService {
 
     return { total, active, pending, suspended, fullAccess, limited };
   }
-
-  // ══════════════════════════════════════════════════════════════
-  // HELPERS
-  // ══════════════════════════════════════════════════════════════
 
   private buildResourcePermissions(
     orgAccess: OrgAccessType,

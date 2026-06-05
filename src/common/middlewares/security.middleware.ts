@@ -6,13 +6,10 @@ export class SecurityHeadersMiddleware implements NestMiddleware {
   private readonly logger = new Logger(SecurityHeadersMiddleware.name);
 
   use(req: Request, res: Response, next: NextFunction): void {
-    // ── Prevent clickjacking ────────────────────────────────────
     res.setHeader('X-Frame-Options', 'DENY');
 
-    // ── Prevent MIME sniffing ───────────────────────────────────
     res.setHeader('X-Content-Type-Options', 'nosniff');
 
-    // ── Strict Transport Security (production only) ────────────
     if (process.env.NODE_ENV === 'production') {
       res.setHeader(
         'Strict-Transport-Security',
@@ -20,7 +17,6 @@ export class SecurityHeadersMiddleware implements NestMiddleware {
       );
     }
 
-    // Remove server fingerprint
     res.removeHeader('X-Powered-By');
 
     // Referrer policy

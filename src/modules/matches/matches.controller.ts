@@ -46,7 +46,6 @@ import type { RequestUser } from '../auth/interfaces/jwt-payload.interface';
 export class MatchesController {
   constructor(private readonly matchesService: MatchesService) {}
 
-  // ─── POST /matches ────────────────────────────────────────────
   @Post()
   @RequirePermissions('matches:create')
   @HttpCode(HttpStatus.CREATED)
@@ -62,7 +61,6 @@ export class MatchesController {
     return this.matchesService.create(dto, user);
   }
 
-  // ─── GET /matches ─────────────────────────────────────────────
   @Get()
   @RequirePermissions('matches:read')
   @ApiOperation({ summary: 'List matches (paginated + filters)' })
@@ -71,7 +69,6 @@ export class MatchesController {
     return this.matchesService.findAll(query, user);
   }
 
-  // ─── GET /matches/live ────────────────────────────────────────
   @Get('live')
   @RequirePermissions('matches:read')
   @ApiOperation({ summary: 'Get all currently live matches' })
@@ -79,7 +76,6 @@ export class MatchesController {
     return this.matchesService.getLive(user);
   }
 
-  // ─── GET /matches/upcoming ────────────────────────────────────
   @Get('upcoming')
   @RequirePermissions('matches:read')
   @ApiOperation({ summary: 'Get upcoming scheduled matches' })
@@ -88,7 +84,6 @@ export class MatchesController {
     return this.matchesService.getUpcoming(+limit, user);
   }
 
-  // ─── GET /matches/stats ───────────────────────────────────────
   @Get('stats')
   @RequirePermissions('matches:read')
   @ApiOperation({ summary: 'Match statistics summary' })
@@ -96,7 +91,6 @@ export class MatchesController {
     return this.matchesService.getStats(user);
   }
 
-  // ─── GET /matches/h2h ─────────────────────────────────────────
   @Get('h2h')
   @RequirePermissions('matches:read')
   @ApiOperation({ summary: 'Head-to-head record between two teams' })
@@ -112,7 +106,6 @@ export class MatchesController {
     return this.matchesService.getHeadToHead(teamAId, teamBId, +limit, user);
   }
 
-  // ─── GET /matches/:id ─────────────────────────────────────────
   @Get(':id')
   @RequirePermissions('matches:read')
   @ApiOperation({ summary: 'Get match by ID (includes events & performances)' })
@@ -122,7 +115,6 @@ export class MatchesController {
     return this.matchesService.findOne(id, user);
   }
 
-  // ─── PATCH /matches/:id ───────────────────────────────────────
   @Patch(':id')
   @RequirePermissions('matches:update')
   @AuditLog({
@@ -141,7 +133,6 @@ export class MatchesController {
     return this.matchesService.update(id, dto, user);
   }
 
-  // ─── PATCH /matches/:id/score ─────────────────────────────────
   @Patch(':id/score')
   @RequirePermissions('matches:update')
   @ApiOperation({ summary: 'Update live match score' })
@@ -155,7 +146,6 @@ export class MatchesController {
     return this.matchesService.updateScore(id, dto, user);
   }
 
-  // ─── POST /matches/:id/finalise ───────────────────────────────
   @Post(':id/finalise')
   @RequirePermissions('matches:update')
   @HttpCode(HttpStatus.OK)
@@ -171,7 +161,6 @@ export class MatchesController {
     return this.matchesService.finalise(id, user);
   }
 
-  // ─── POST /matches/:id/events ─────────────────────────────────
   @Post(':id/events')
   @RequirePermissions('matches:update')
   @HttpCode(HttpStatus.OK)
@@ -188,7 +177,6 @@ export class MatchesController {
     return this.matchesService.addEvent(id, dto, user);
   }
 
-  // ─── DELETE /matches/:id/events/:eventId ──────────────────────
   @Delete(':id/events/:eventId')
   @RequirePermissions('matches:update')
   @ApiOperation({ summary: 'Remove an event from match timeline' })
@@ -202,7 +190,6 @@ export class MatchesController {
     return this.matchesService.removeEvent(id, eventId, user);
   }
 
-  // ─── POST /matches/:id/performances ──────────────────────────
   @Post(':id/performances')
   @RequirePermissions('matches:update')
   @HttpCode(HttpStatus.OK)
@@ -219,7 +206,6 @@ export class MatchesController {
     return this.matchesService.upsertPerformance(id, dto, user);
   }
 
-  // ─── DELETE /matches/:id ──────────────────────────────────────
   @Delete(':id')
   @RequirePermissions('matches:delete')
   @AuditLog({

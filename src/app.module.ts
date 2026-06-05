@@ -52,6 +52,8 @@ import { SeasonsModule } from './modules/seasons/seasons.module';
 import { StaffModule } from './modules/staff/staff.module';
 import { CoachesModule } from './modules/coaches/coaches.module';
 import { ChatModule } from './modules/chat/chat.module';
+import { RegistrationsModule } from './modules/registrations/registration.module';
+import { WebsitesModule } from './modules/websites/websites.module';
 
 @Module({
   imports: [
@@ -126,6 +128,7 @@ import { ChatModule } from './modules/chat/chat.module';
     PermissionsModule,
     AuditModule,
     OrganizationsModule,
+    RegistrationsModule,
     TeamsModule,
     PlayersModule,
     LeaguesModule,
@@ -134,6 +137,7 @@ import { ChatModule } from './modules/chat/chat.module';
     MatchesModule,
     TournamentsModule,
     SeasonsModule,
+    WebsitesModule,
     SeederModule,
     AppRedisModule,
   ],
