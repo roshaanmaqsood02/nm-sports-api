@@ -58,6 +58,8 @@ import { PowerRankingsModule } from './modules/power-rankings/power-rankings.mod
 import { ExportsModule } from './modules/exports/exports.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { GamesModule } from './modules/games/games.module';
+import { EventsModule } from './modules/events/events.module';
 
 @Module({
   imports: [
@@ -144,6 +146,8 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     TournamentsModule,
     SeasonsModule,
     PowerRankingsModule,
+    GamesModule,
+    EventsModule,
     WebsitesModule,
     ExportsModule,
     NotificationsModule,

@@ -129,6 +129,8 @@ async function bootstrap() {
         'Power Rankings',
         'Power ranking management — team rows, publish, reorder',
       )
+      .addTag('Games', 'Game management — opponents, venue, score, status')
+      .addTag('Events', 'Event management — recurring, all-day, team details')
       .addTag(
         'Websites',
         'Website template activation and custom website requests',

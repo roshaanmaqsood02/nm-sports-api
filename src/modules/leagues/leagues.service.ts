@@ -476,7 +476,6 @@ export class LeaguesService {
     };
   }
 
-  // ─── Access helpers ───────────────────────────────────────────
   private checkOrgAccess(org: any, user: RequestUser): void {
     if (user.isSuperAdmin || user.role === UserRole.ADMIN) return;
     const isOwner = org.createdBy.toString() === user._id;
