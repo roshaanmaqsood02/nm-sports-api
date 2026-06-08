@@ -91,6 +91,10 @@ async function bootstrap() {
         },
         'JWT-auth',
       )
+      .addTag(
+        'Notifications',
+        'In-app, email, push notifications + preferences',
+      )
       .addTag('Health', 'Health check')
       .addTag('Auth', 'Authentication — login, logout, refresh')
       .addTag('Users', 'User management')
@@ -122,9 +126,14 @@ async function bootstrap() {
         'Season management — subseasons, game ID generation, seeds',
       )
       .addTag(
+        'Power Rankings',
+        'Power ranking management — team rows, publish, reorder',
+      )
+      .addTag(
         'Websites',
         'Website template activation and custom website requests',
       )
+      .addTag('Exports', 'Game schedule export — CSV, Excel, PDF, JSON')
       .addTag('Audit', 'Audit log queries')
       .build();
 

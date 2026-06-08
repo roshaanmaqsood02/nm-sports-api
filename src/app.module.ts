@@ -54,6 +54,10 @@ import { CoachesModule } from './modules/coaches/coaches.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { RegistrationsModule } from './modules/registrations/registration.module';
 import { WebsitesModule } from './modules/websites/websites.module';
+import { PowerRankingsModule } from './modules/power-rankings/power-rankings.module';
+import { ExportsModule } from './modules/exports/exports.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -117,6 +121,8 @@ import { WebsitesModule } from './modules/websites/websites.module';
       inject: [ConfigService],
     }),
 
+    EventEmitterModule.forRoot(),
+
     LoggerModule,
     UploadModule,
     UsersModule,
@@ -137,7 +143,10 @@ import { WebsitesModule } from './modules/websites/websites.module';
     MatchesModule,
     TournamentsModule,
     SeasonsModule,
+    PowerRankingsModule,
     WebsitesModule,
+    ExportsModule,
+    NotificationsModule,
     SeederModule,
     AppRedisModule,
   ],

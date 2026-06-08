@@ -19,13 +19,13 @@ import { Message, MessageSchema } from './schemas/message.schema';
       { name: Message.name, schema: MessageSchema },
     ]),
 
-    // ── JWT needed by ChatGateway to verify socket tokens ─────
+    // JWT needed by ChatGateway to verify socket tokens
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (cs: ConfigService) => ({
         secret: cs.get<string>('JWT_ACCESS_SECRET'),
         signOptions: {
-          expiresIn: cs.get<string>('JWT_ACCESS_EXPIRES_IN', '15m') as any, // Type assertion
+          expiresIn: cs.get<string>('JWT_ACCESS_EXPIRES_IN', '15m') as any,
         },
       }),
       inject: [ConfigService],
