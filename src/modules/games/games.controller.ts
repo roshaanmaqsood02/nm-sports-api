@@ -23,7 +23,7 @@ import { CreateGameDto } from './dto/create-game.dto';
 import {
   UpdateGameDto,
   AddOpponentDto,
-  UpdateScoreDto,
+  UpdateGameScoreDto,
 } from './dto/update-game.dto';
 import { GameResponseDto, PaginatedGamesDto } from './dto/game-response.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -142,7 +142,7 @@ export class GamesController {
   @ApiParam({ name: 'id' })
   updateScore(
     @Param('id') id: string,
-    @Body() dto: UpdateScoreDto,
+    @Body() dto: UpdateGameScoreDto,
     @CurrentUser() user: RequestUser,
   ) {
     return this.gamesService.updateScore(id, dto, user);

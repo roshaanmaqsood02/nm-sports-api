@@ -11,7 +11,7 @@ import { CreateGameDto } from './dto/create-game.dto';
 import {
   UpdateGameDto,
   AddOpponentDto,
-  UpdateScoreDto,
+  UpdateGameScoreDto,
 } from './dto/update-game.dto';
 import { GameDocument } from './schemas/game.schema';
 import { GameStatus } from './enums/game.enum';
@@ -216,7 +216,7 @@ export class GamesService {
   // ── Score update ──────────────────────────────────────────────
   async updateScore(
     id: string,
-    dto: UpdateScoreDto,
+    dto: UpdateGameScoreDto,
     user: RequestUser,
   ): Promise<GameDocument> {
     const game = await this.repo.findByIdPopulated(id);

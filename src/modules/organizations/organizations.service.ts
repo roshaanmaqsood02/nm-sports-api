@@ -62,8 +62,8 @@ export class OrganizationsService {
     let logo;
     if (logoFile) {
       logo = await this.uploadService.processLogo(logoFile);
+      console.log('Processed logo:', logo); // ← add this
     }
-
     const org = await this.orgsRepository.create({
       name: dto.name,
       acronym: dto.acronym,

@@ -60,6 +60,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { GamesModule } from './modules/games/games.module';
 import { EventsModule } from './modules/events/events.module';
+import { FinancialModule } from './modules/financial/financial.module';
 
 @Module({
   imports: [
@@ -127,6 +128,7 @@ import { EventsModule } from './modules/events/events.module';
 
     LoggerModule,
     UploadModule,
+    FinancialModule,
     UsersModule,
     StaffModule,
     CoachesModule,

@@ -3,9 +3,9 @@ import { registerAs } from '@nestjs/config';
 export default registerAs('app', () => ({
   name: process.env.APP_NAME ?? 'NMSports API',
   version: process.env.APP_VERSION ?? '1.0.0',
-  url: process.env.APP_URL ?? 'http://localhost:3000',
+  url: process.env.APP_URL ?? 'http://localhost:8000',
   env: process.env.NODE_ENV ?? 'development',
-  port: parseInt(process.env.PORT ?? '3000', 10),
+  port: parseInt(process.env.PORT ?? '8000', 10),
   prefix: process.env.API_PREFIX ?? 'api/v1',
   upload: {
     dest: process.env.UPLOAD_DEST ?? './uploads',

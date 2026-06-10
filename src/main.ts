@@ -95,6 +95,7 @@ async function bootstrap() {
         'Notifications',
         'In-app, email, push notifications + preferences',
       )
+      .addTag('Financial', 'Invoicing, sale items, payment terms, transactions')
       .addTag('Health', 'Health check')
       .addTag('Auth', 'Authentication — login, logout, refresh')
       .addTag('Users', 'User management')

@@ -22,7 +22,7 @@ export class AddOpponentDto {
   opponent!: GameOpponentDto;
 }
 
-export class UpdateScoreDto {
+export class UpdateGameScoreDto {
   @ApiPropertyOptional({ example: 3 })
   @IsOptional()
   @IsInt()
