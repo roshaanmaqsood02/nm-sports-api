@@ -16,6 +16,7 @@ import { TeamDocument } from './schemas/team.schema';
 import { TeamStatus } from './enums/team.enum';
 import { RequestUser } from '../auth/interfaces/jwt-payload.interface';
 import { UserRole } from '../users/enums/user.enum';
+import { ClubsRepository } from '../clubs/clubs.repository';
 
 @Injectable()
 export class TeamsService {
@@ -24,6 +25,7 @@ export class TeamsService {
   constructor(
     private readonly teamsRepository: TeamsRepository,
     private readonly orgsRepository: OrganizationsRepository,
+    private readonly clubsRepository: ClubsRepository,
     private readonly uploadService: UploadService,
   ) {}
 
@@ -38,6 +40,14 @@ export class TeamsService {
     if (!org) {
       throw new NotFoundException(
         `Organization ${dto.organizationId} not found`,
+      );
+    }
+
+    // Verify club or league exists
+    const clubOrLeague = await this.clubsRepository.findById(dto.clubOrLeague);
+    if (!clubOrLeague) {
+      throw new NotFoundException(
+        `Club or League ${dto.clubOrLeague} not found`,
       );
     }
 
@@ -56,6 +66,7 @@ export class TeamsService {
     const nameExists = await this.teamsRepository.exists({
       name: { $regex: `^${dto.name}$`, $options: 'i' },
       organizationId: new Types.ObjectId(dto.organizationId),
+      clubOrLeague: new Types.ObjectId(dto.clubOrLeague),
       season: dto.season,
     });
 
@@ -93,6 +104,7 @@ export class TeamsService {
       season: dto.season,
       subSeason: dto.subSeason,
       organizationId: new Types.ObjectId(dto.organizationId),
+      clubOrLeague: new Types.ObjectId(dto.clubOrLeague),
       primaryColor: dto.primaryColor,
       secondaryColor: dto.secondaryColor,
       logo: logo
@@ -124,6 +136,7 @@ export class TeamsService {
     currentUser: RequestUser,
     filters: {
       organizationId?: string;
+      clubOrLeague?: string;
       sport?: string;
       gender?: string;
       type?: string;
@@ -150,6 +163,9 @@ export class TeamsService {
     // Apply filters
     if (filters.organizationId) {
       filter['organizationId'] = new Types.ObjectId(filters.organizationId);
+    }
+    if (filters.clubOrLeague) {
+      filter['clubOrLeague'] = new Types.ObjectId(filters.clubOrLeague);
     }
     if (filters.sport) filter['sport'] = filters.sport;
     if (filters.gender) filter['gender'] = filters.gender;
@@ -219,6 +235,16 @@ export class TeamsService {
       }
     }
 
+    // Verify club or league exists
+    if (dto.clubOrLeague && dto.clubOrLeague !== team.clubOrLeague.toString()) {
+      const clubOrLeague = await this.orgsRepository.findById(dto.clubOrLeague);
+      if (!clubOrLeague) {
+        throw new NotFoundException(
+          `Club or League ${dto.clubOrLeague} not found`,
+        );
+      }
+    }
+
     // Sport change — re-validate against org
     if (dto.sport && dto.sport !== team.sport) {
       const org = await this.orgsRepository.findById(
@@ -241,6 +267,7 @@ export class TeamsService {
       'type',
       'season',
       'subSeason',
+      'clubOrLeague',
       'primaryColor',
       'secondaryColor',
       'status',

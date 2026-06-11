@@ -79,6 +79,7 @@ export class TeamsController {
         'type',
         'season',
         'organizationId',
+        'clubOrLeague',
       ],
       properties: {
         name: { type: 'string', example: 'Lahore Lions Cricket Club' },
@@ -90,6 +91,7 @@ export class TeamsController {
         season: { type: 'string', example: '2024-25' },
         subSeason: { type: 'string', example: 'Spring' },
         organizationId: { type: 'string', example: '64abc123def456' },
+        clubOrLeague: { type: 'string', example: '64abc123def456' },
         primaryColor: { type: 'string', example: '#1A73E8' },
         secondaryColor: { type: 'string', example: '#FFFFFF' },
         logo: { type: 'string', format: 'binary' },
@@ -120,6 +122,7 @@ export class TeamsController {
     description: 'Search name, shortName, abbreviation',
   })
   @ApiQuery({ name: 'organizationId', required: false })
+  @ApiQuery({ name: 'clubOrLeague', required: false })
   @ApiQuery({ name: 'sport', required: false, enum: SportType })
   @ApiQuery({ name: 'gender', required: false, enum: TeamGender })
   @ApiQuery({ name: 'type', required: false, enum: TeamType })
@@ -133,6 +136,7 @@ export class TeamsController {
     @Query('limit') limit = 10,
     @Query('search') search?: string,
     @Query('organizationId') organizationId?: string,
+    @Query('clubOrLeague') clubOrLeague?: string,
     @Query('sport') sport?: string,
     @Query('gender') gender?: string,
     @Query('type') type?: string,
@@ -142,6 +146,8 @@ export class TeamsController {
   ) {
     return this.teamsService.findAll(+page, +limit, user, {
       organizationId,
+
+      clubOrLeague,
       sport,
       gender,
       type,

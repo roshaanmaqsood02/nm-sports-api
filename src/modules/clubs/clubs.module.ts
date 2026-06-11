@@ -13,6 +13,10 @@ import { OrganizationsModule } from '../organizations/organizations.module';
   ],
   controllers: [ClubsController],
   providers: [ClubsService, ClubsRepository],
-  exports: [ClubsService, ClubsRepository],
+  exports: [
+    ClubsService,
+    ClubsRepository,
+    MongooseModule.forFeature([{ name: Club.name, schema: ClubSchema }]),
+  ],
 })
 export class ClubsModule {}

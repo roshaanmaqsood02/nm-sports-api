@@ -20,6 +20,7 @@ export class TeamsRepository {
     return this.teamModel
       .findOne({ _id: id, isDeleted: false })
       .populate('organizationId', 'name acronym logo')
+      .populate('clubOrLeague', 'name acronym logo')
       .populate('createdBy', 'email username profile')
       .exec();
   }
@@ -47,6 +48,7 @@ export class TeamsRepository {
         .skip(skip)
         .limit(limit)
         .populate('organizationId', 'name acronym')
+        .populate('clubOrLeague', 'name acronym')
         .populate('createdBy', 'email username')
         .exec(),
       this.teamModel.countDocuments(baseFilter).exec(),
@@ -62,6 +64,7 @@ export class TeamsRepository {
     return this.teamModel
       .findOneAndUpdate({ _id: id, isDeleted: false }, update, { new: true })
       .populate('organizationId', 'name acronym')
+      .populate('clubOrLeague', 'name acronym')
       .exec();
   }
 

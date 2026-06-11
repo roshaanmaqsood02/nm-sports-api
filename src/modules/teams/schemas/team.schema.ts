@@ -94,6 +94,14 @@ export class Team {
   organizationId!: Types.ObjectId;
 
   @Prop({
+    type: Types.ObjectId,
+    ref: 'Club',
+    required: true,
+    index: true,
+  })
+  clubOrLeague!: Types.ObjectId;
+
+  @Prop({
     trim: true,
     match: [
       /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,

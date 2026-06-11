@@ -21,6 +21,7 @@ export class TeamResponseDto {
   @ApiProperty() season!: string;
   @ApiPropertyOptional() subSeason?: string;
   @ApiProperty() organizationId!: string;
+  @ApiProperty() clubOrLeague!: string;
   @ApiPropertyOptional() primaryColor?: string;
   @ApiPropertyOptional() secondaryColor?: string;
   @ApiPropertyOptional({ type: () => TeamLogoDto }) logo?: TeamLogoDto;

@@ -81,6 +81,11 @@ export class CreateTeamDto {
   @IsNotEmpty()
   organizationId!: string;
 
+  @ApiProperty({ example: '64abc123def456' })
+  @IsMongoId({ message: 'clubOrLeague must be a valid MongoDB ObjectId' })
+  @IsNotEmpty()
+  clubOrLeague!: string;
+
   @ApiPropertyOptional({ example: '#1A73E8' })
   @IsOptional()
   @IsString()

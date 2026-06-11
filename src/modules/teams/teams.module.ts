@@ -7,6 +7,8 @@ import { TeamsRepository } from './teams.repository';
 import { Team, TeamSchema } from './schemas/team.schema';
 import { AuditModule } from '../audit/audit.module';
 import { OrganizationsModule } from '../organizations/organizations.module';
+import { ClubsRepository } from '../clubs/clubs.repository';
+import { ClubsModule } from '../clubs/clubs.module';
 
 @Module({
   imports: [
@@ -16,9 +18,10 @@ import { OrganizationsModule } from '../organizations/organizations.module';
     }),
     AuditModule,
     OrganizationsModule,
+    ClubsModule,
   ],
   controllers: [TeamsController],
-  providers: [TeamsService, TeamsRepository],
-  exports: [TeamsService, TeamsRepository],
+  providers: [TeamsService, TeamsRepository, ClubsRepository],
+  exports: [TeamsService, TeamsRepository, ClubsRepository],
 })
 export class TeamsModule {}
