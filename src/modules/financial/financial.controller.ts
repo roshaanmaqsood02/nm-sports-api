@@ -14,7 +14,6 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiParam,
-  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -48,17 +47,14 @@ import {
   PaginatedTransactionsDto,
   FinancialOverviewDto,
 } from './dto/financial-response.dto';
+import {
+  InvoiceQueryDto,
+  SaleItemQueryDto,
+  PaymentTermQueryDto,
+  TransactionQueryDto,
+} from './dto/invoice-query.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import type { RequestUser } from '../auth/interfaces/jwt-payload.interface';
-import {
-  InvoiceStatus,
-  SaleItemPriceOption,
-  InstallmentWindow,
-  TransactionType,
-  TransactionStatus,
-  PaymentType,
-  PaymentTermStatus,
-} from './enums/financial.enum';
 
 @ApiTags('Financial')
 @ApiBearerAuth('JWT-auth')
@@ -96,40 +92,13 @@ export class FinancialController {
 
   @Get('invoices')
   @ApiOperation({ summary: 'List all invoices/orders with filters' })
-  @ApiQuery({ name: 'page', required: false, example: 1 })
-  @ApiQuery({ name: 'limit', required: false, example: 10 })
-  @ApiQuery({ name: 'organizationId', required: false })
-  @ApiQuery({
-    name: 'status',
-    required: false,
-    enum: InvoiceStatus,
-    description:
-      'Filter: all (omit), open, paid_in_full, past_due, cancelled, draft',
-  })
-  @ApiQuery({ name: 'memberId', required: false })
-  @ApiQuery({ name: 'startDate', required: false, example: '2024-01-01' })
-  @ApiQuery({ name: 'endDate', required: false, example: '2024-12-31' })
-  @ApiQuery({ name: 'search', required: false })
   @ApiResponse({ status: 200, type: PaginatedInvoicesDto })
   findAllInvoices(
+    @Query() query: InvoiceQueryDto,
     @CurrentUser() user: RequestUser,
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-    @Query('organizationId') organizationId?: string,
-    @Query('status') status?: string,
-    @Query('memberId') memberId?: string,
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
-    @Query('search') search?: string,
   ) {
-    return this.financialService.findAllInvoices(+page, +limit, user, {
-      organizationId,
-      status,
-      memberId,
-      startDate,
-      endDate,
-      search,
-    });
+    const { page = 1, limit = 10, ...filters } = query;
+    return this.financialService.findAllInvoices(page, limit, user, filters);
   }
 
   @Get('invoices/:id')
@@ -202,24 +171,16 @@ export class FinancialController {
   @ApiOperation({
     summary: 'List sale items — created, name, variations, total, sold',
   })
-  @ApiQuery({ name: 'page', required: false, example: 1 })
-  @ApiQuery({ name: 'limit', required: false, example: 10 })
-  @ApiQuery({ name: 'organizationId', required: false })
-  @ApiQuery({ name: 'isActive', required: false, example: 'true' })
-  @ApiQuery({ name: 'search', required: false })
   @ApiResponse({ status: 200, type: PaginatedSaleItemsDto })
   findAllSaleItems(
+    @Query() query: SaleItemQueryDto,
     @CurrentUser() user: RequestUser,
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-    @Query('organizationId') organizationId?: string,
-    @Query('isActive') isActive?: string,
-    @Query('search') search?: string,
   ) {
-    return this.financialService.findAllSaleItems(+page, +limit, user, {
-      organizationId,
-      isActive,
-      search,
+    const { page = 1, limit = 10, ...filters } = query;
+    return this.financialService.findAllSaleItems(page, limit, user, {
+      ...filters,
+      isActive:
+        filters.isActive !== undefined ? String(filters.isActive) : undefined,
     });
   }
 
@@ -294,25 +255,18 @@ export class FinancialController {
     summary:
       'List payment terms — name, active dates, installments, applied to',
   })
-  @ApiQuery({ name: 'page', required: false, example: 1 })
-  @ApiQuery({ name: 'limit', required: false, example: 10 })
-  @ApiQuery({ name: 'organizationId', required: false })
-  @ApiQuery({ name: 'status', required: false, enum: PaymentTermStatus })
-  @ApiQuery({ name: 'search', required: false })
   @ApiResponse({ status: 200, type: PaginatedPaymentTermsDto })
   findAllPaymentTerms(
+    @Query() query: PaymentTermQueryDto,
     @CurrentUser() user: RequestUser,
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-    @Query('organizationId') organizationId?: string,
-    @Query('status') status?: string,
-    @Query('search') search?: string,
   ) {
-    return this.financialService.findAllPaymentTerms(+page, +limit, user, {
-      organizationId,
-      status,
-      search,
-    });
+    const { page = 1, limit = 10, ...filters } = query;
+    return this.financialService.findAllPaymentTerms(
+      page,
+      limit,
+      user,
+      filters,
+    );
   }
 
   @Get('payment-terms/:id')
@@ -360,40 +314,18 @@ export class FinancialController {
     summary:
       'List transactions — date, transactionId, description, paidBy, paymentType, amount, type, status',
   })
-  @ApiQuery({ name: 'page', required: false, example: 1 })
-  @ApiQuery({ name: 'limit', required: false, example: 10 })
-  @ApiQuery({ name: 'organizationId', required: false })
-  @ApiQuery({ name: 'invoiceId', required: false })
-  @ApiQuery({ name: 'type', required: false, enum: TransactionType })
-  @ApiQuery({ name: 'status', required: false, enum: TransactionStatus })
-  @ApiQuery({ name: 'paymentType', required: false, enum: PaymentType })
-  @ApiQuery({ name: 'startDate', required: false, example: '2024-01-01' })
-  @ApiQuery({ name: 'endDate', required: false, example: '2024-12-31' })
-  @ApiQuery({ name: 'search', required: false })
   @ApiResponse({ status: 200, type: PaginatedTransactionsDto })
   findAllTransactions(
+    @Query() query: TransactionQueryDto,
     @CurrentUser() user: RequestUser,
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-    @Query('organizationId') organizationId?: string,
-    @Query('invoiceId') invoiceId?: string,
-    @Query('type') type?: string,
-    @Query('status') status?: string,
-    @Query('paymentType') paymentType?: string,
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
-    @Query('search') search?: string,
   ) {
-    return this.financialService.findAllTransactions(+page, +limit, user, {
-      organizationId,
-      invoiceId,
-      type,
-      status,
-      paymentType,
-      startDate,
-      endDate,
-      search,
-    });
+    const { page = 1, limit = 10, ...filters } = query;
+    return this.financialService.findAllTransactions(
+      page,
+      limit,
+      user,
+      filters,
+    );
   }
 
   @Get('transactions/:id')

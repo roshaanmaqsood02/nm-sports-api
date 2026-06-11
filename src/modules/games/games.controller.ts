@@ -1,3 +1,4 @@
+// games.controller.ts (updated)
 import {
   Body,
   Controller,
@@ -14,7 +15,6 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiParam,
-  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -26,10 +26,11 @@ import {
   UpdateGameScoreDto,
 } from './dto/update-game.dto';
 import { GameResponseDto, PaginatedGamesDto } from './dto/game-response.dto';
+import { GameQueryDto, GameStatsQueryDto } from './dto/game-query.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { RequirePermissions } from '../auth/decorators/permissions.decorator';
 import type { RequestUser } from '../auth/interfaces/jwt-payload.interface';
-import { GameStatus, GameType } from './enums/game.enum';
+import { GameStatus } from './enums/game.enum';
 
 @ApiTags('Games')
 @ApiBearerAuth('JWT-auth')
@@ -51,43 +52,9 @@ export class GamesController {
   @Get()
   @RequirePermissions('teams:read')
   @ApiOperation({ summary: 'List all games (paginated + filters)' })
-  @ApiQuery({ name: 'page', required: false, example: 1 })
-  @ApiQuery({ name: 'limit', required: false, example: 10 })
-  @ApiQuery({ name: 'organizationId', required: false })
-  @ApiQuery({ name: 'teamId', required: false })
-  @ApiQuery({ name: 'status', required: false, enum: GameStatus })
-  @ApiQuery({ name: 'gameType', required: false, enum: GameType })
-  @ApiQuery({ name: 'season', required: false })
-  @ApiQuery({ name: 'leagueId', required: false })
-  @ApiQuery({ name: 'startDate', required: false, example: '2025-01-01' })
-  @ApiQuery({ name: 'endDate', required: false, example: '2025-12-31' })
-  @ApiQuery({ name: 'search', required: false })
   @ApiResponse({ status: 200, type: PaginatedGamesDto })
-  findAll(
-    @CurrentUser() user: RequestUser,
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-    @Query('organizationId') organizationId?: string,
-    @Query('teamId') teamId?: string,
-    @Query('status') status?: string,
-    @Query('gameType') gameType?: string,
-    @Query('season') season?: string,
-    @Query('leagueId') leagueId?: string,
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
-    @Query('search') search?: string,
-  ) {
-    return this.gamesService.findAll(+page, +limit, user, {
-      organizationId,
-      teamId,
-      status,
-      gameType,
-      season,
-      leagueId,
-      startDate,
-      endDate,
-      search,
-    });
+  findAll(@CurrentUser() user: RequestUser, @Query() query: GameQueryDto) {
+    return this.gamesService.findAll(query, user);
   }
 
   @Get('stats/:organizationId')
@@ -96,9 +63,10 @@ export class GamesController {
   @ApiParam({ name: 'organizationId' })
   getStats(
     @Param('organizationId') organizationId: string,
+    @Query() query: GameStatsQueryDto,
     @CurrentUser() user: RequestUser,
   ) {
-    return this.gamesService.getStats(organizationId, user);
+    return this.gamesService.getStats(organizationId, query, user);
   }
 
   @Get(':id')

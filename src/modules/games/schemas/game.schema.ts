@@ -4,62 +4,54 @@ import { GameStatus, GameType, GameVisibility } from '../enums/game.enum';
 
 export type GameDocument = Game & Document;
 
-// ─── Embedded: Venue ─────────────────────────────────────────────────────────
 @Schema({ _id: false })
 export class GameVenue {
   @Prop({ required: true, trim: true })
-  name!: string; // e.g. Sinclair Community College
+  name!: string;
 
   @Prop({ trim: true })
-  street?: string; // e.g. West Third Street
+  street?: string;
 
   @Prop({ trim: true })
-  city?: string; // e.g. Dayton
+  city?: string;
 
   @Prop({ trim: true })
-  state?: string; // e.g. OH
+  state?: string;
 
   @Prop({ trim: true })
-  country?: string; // e.g. USA
+  country?: string;
 
   @Prop({ trim: true })
   zip?: string;
 
-  // Full address string (auto-composed or user-provided)
   @Prop({ trim: true })
-  fullAddress?: string; // e.g. Sinclair Community College, West Third Street, Dayton, OH, USA
+  fullAddress?: string;
 
-  // Map coordinates
   @Prop() lat?: number;
   @Prop() lng?: number;
 }
 
-// ─── Embedded: Game Time ─────────────────────────────────────────────────────
 @Schema({ _id: false })
 export class GameTime {
-  // Display format: "3:00 PM - 5:00 PM EDT"
   @Prop({ required: true })
-  startTime!: string; // e.g. "3:00 PM"
+  startTime!: string;
 
   @Prop()
-  endTime?: string; // e.g. "5:00 PM"
+  endTime?: string;
 
   @Prop({ trim: true })
-  timezone!: string; // e.g. "EDT", "America/New_York"
+  timezone!: string;
 
-  // Formatted display string
   @Prop({ trim: true })
-  displayTime?: string; // e.g. "3:00 PM - 5:00 PM EDT"
+  displayTime?: string;
 
-  // Duration in minutes
   @Prop({ min: 0 })
   durationMinutes?: number;
 
   @Prop({ trim: true })
-  durationDisplay?: string; // e.g. "2 hours", "90 minutes"
+  durationDisplay?: string;
 }
 
-// ─── Embedded: Opponent ──────────────────────────────────────────────────────
 @Schema({ _id: true })
 export class GameOpponent {
   @Prop({ required: true, trim: true })
@@ -83,7 +75,6 @@ export class GameOpponent {
 
 export const GameOpponentSchema = SchemaFactory.createForClass(GameOpponent);
 
-// ─── Main Game Schema ─────────────────────────────────────────────────────────
 @Schema({
   timestamps: true,
   collection: 'games',
@@ -96,11 +87,9 @@ export const GameOpponentSchema = SchemaFactory.createForClass(GameOpponent);
   },
 })
 export class Game {
-  // ── Identity ─────────────────────────────────────────────────
   @Prop({ required: true, trim: true, index: true })
   name!: string;
 
-  // ── Organization & Team ───────────────────────────────────────
   @Prop({
     type: Types.ObjectId,
     ref: 'Organization',
@@ -115,18 +104,15 @@ export class Game {
   @Prop({ trim: true })
   teamName?: string;
 
-  // ── Date & Time ───────────────────────────────────────────────
   @Prop({ required: true, index: true })
   date!: Date;
 
   @Prop({ type: GameTime, required: true })
   time!: GameTime;
 
-  // ── Venue ─────────────────────────────────────────────────────
   @Prop({ type: GameVenue, required: true })
   venue!: GameVenue;
 
-  // ── Type ─────────────────────────────────────────────────────
   @Prop({
     type: String,
     enum: GameType,
@@ -134,11 +120,9 @@ export class Game {
   })
   gameType!: GameType;
 
-  // ── Opponents ─────────────────────────────────────────────────
   @Prop({ type: [GameOpponentSchema], default: [] })
   opponents!: GameOpponent[];
 
-  // ── Status ───────────────────────────────────────────────────
   @Prop({
     type: String,
     enum: GameStatus,
@@ -147,24 +131,18 @@ export class Game {
   })
   status!: GameStatus;
 
-  // ── Scores (filled after game) ────────────────────────────────
   @Prop({ default: 0 }) homeScore!: number;
   @Prop({ default: 0 }) awayScore!: number;
 
-  // ── Team Details ──────────────────────────────────────────────
-  // Arrival time — e.g. "2:30 PM"
   @Prop({ trim: true })
   arrivalTime?: string;
 
-  // Uniform detail — e.g. "White jersey, black shorts"
   @Prop({ trim: true, maxlength: 300 })
   uniformDetail?: string;
 
-  // Notes
   @Prop({ trim: true, maxlength: 2000 })
   notes?: string;
 
-  // ── Visibility ───────────────────────────────────────────────
   @Prop({
     type: String,
     enum: GameVisibility,
@@ -172,7 +150,6 @@ export class Game {
   })
   visibility!: GameVisibility;
 
-  // ── Season / League context ───────────────────────────────────
   @Prop({ trim: true })
   season?: string;
 
@@ -182,18 +159,15 @@ export class Game {
   @Prop({ trim: true })
   leagueName?: string;
 
-  // ── Ownership ────────────────────────────────────────────────
   @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
   createdBy!: Types.ObjectId;
 
-  // ── Soft Delete ───────────────────────────────────────────────
   @Prop({ default: false }) isDeleted!: boolean;
   @Prop() deletedAt?: Date;
 }
 
 export const GameSchema = SchemaFactory.createForClass(Game);
 
-// ─── Virtuals ─────────────────────────────────────────────────────────────────
 GameSchema.virtual('isUpcoming').get(function (this: GameDocument) {
   return this.date > new Date() && this.status === GameStatus.SCHEDULED;
 });
@@ -206,7 +180,7 @@ GameSchema.virtual('opponentCount').get(function (this: GameDocument) {
   return this.opponents.length;
 });
 
-// ─── Indexes ──────────────────────────────────────────────────────────────────
+// Indexes
 GameSchema.index({ organizationId: 1, date: -1 });
 GameSchema.index({ organizationId: 1, status: 1 });
 GameSchema.index({ teamId: 1, date: -1 });

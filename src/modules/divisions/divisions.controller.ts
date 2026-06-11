@@ -14,7 +14,6 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiParam,
-  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -25,10 +24,10 @@ import {
   DivisionResponseDto,
   PaginatedDivisionsDto,
 } from './dto/division-response.dto';
+import { QueryDivisionDto } from './dto/query-division.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { RequirePermissions } from '../auth/decorators/permissions.decorator';
 import type { RequestUser } from '../auth/interfaces/jwt-payload.interface';
-import { DivisionType, DivisionStatus } from './enums/division.enum';
 
 @ApiTags('Divisions')
 @ApiBearerAuth('JWT-auth')
@@ -55,26 +54,20 @@ export class DivisionsController {
   @RequirePermissions('sports:read')
   @ApiOperation({ summary: 'List all divisions in an organization' })
   @ApiParam({ name: 'organizationId' })
-  @ApiQuery({ name: 'page', required: false, example: 1 })
-  @ApiQuery({ name: 'limit', required: false, example: 10 })
-  @ApiQuery({ name: 'type', required: false, enum: DivisionType })
-  @ApiQuery({ name: 'status', required: false, enum: DivisionStatus })
-  @ApiQuery({ name: 'search', required: false })
   @ApiResponse({ status: 200, type: PaginatedDivisionsDto })
   findAll(
     @Param('organizationId') organizationId: string,
     @CurrentUser() user: RequestUser,
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-    @Query('type') type?: string,
-    @Query('status') status?: string,
-    @Query('search') search?: string,
+    @Query() query: QueryDivisionDto,
   ) {
-    return this.divisionsService.findAll(organizationId, +page, +limit, user, {
-      type,
-      status,
-      search,
-    });
+    const { page, limit, ...filters } = query;
+    return this.divisionsService.findAll(
+      organizationId,
+      page,
+      limit,
+      user,
+      filters,
+    );
   }
 
   @Get(':id')

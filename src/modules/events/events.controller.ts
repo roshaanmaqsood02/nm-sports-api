@@ -27,6 +27,7 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { RequirePermissions } from '../auth/decorators/permissions.decorator';
 import type { RequestUser } from '../auth/interfaces/jwt-payload.interface';
 import { EventStatus, EventType } from './enums/event.enum';
+import { QueryEventDto } from './dto/query-event.dto';
 
 @ApiTags('Events')
 @ApiBearerAuth('JWT-auth')
@@ -51,40 +52,10 @@ export class EventsController {
   @Get()
   @RequirePermissions('teams:read')
   @ApiOperation({ summary: 'List all events (paginated + filters)' })
-  @ApiQuery({ name: 'page', required: false, example: 1 })
-  @ApiQuery({ name: 'limit', required: false, example: 10 })
-  @ApiQuery({ name: 'organizationId', required: false })
-  @ApiQuery({ name: 'teamId', required: false })
-  @ApiQuery({ name: 'status', required: false, enum: EventStatus })
-  @ApiQuery({ name: 'eventType', required: false, enum: EventType })
-  @ApiQuery({ name: 'isAllDay', required: false, example: 'false' })
-  @ApiQuery({ name: 'startDate', required: false, example: '2025-01-01' })
-  @ApiQuery({ name: 'endDate', required: false, example: '2025-12-31' })
-  @ApiQuery({ name: 'search', required: false })
   @ApiResponse({ status: 200, type: PaginatedEventsDto })
-  findAll(
-    @CurrentUser() user: RequestUser,
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-    @Query('organizationId') organizationId?: string,
-    @Query('teamId') teamId?: string,
-    @Query('status') status?: string,
-    @Query('eventType') eventType?: string,
-    @Query('isAllDay') isAllDay?: string,
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
-    @Query('search') search?: string,
-  ) {
-    return this.eventsService.findAll(+page, +limit, user, {
-      organizationId,
-      teamId,
-      status,
-      eventType,
-      isAllDay,
-      startDate,
-      endDate,
-      search,
-    });
+  findAll(@CurrentUser() user: RequestUser, @Query() query: QueryEventDto) {
+    const { page, limit, ...filters } = query;
+    return this.eventsService.findAll(page, limit, user, filters);
   }
 
   @Get('stats/:organizationId')

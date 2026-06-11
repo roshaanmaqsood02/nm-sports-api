@@ -20,9 +20,8 @@ export class PlayersRepository {
   async findById(id: string): Promise<PlayerDocument | null> {
     return this.playerModel
       .findOne({ _id: id, isDeleted: false })
-      .populate('currentTeamId', 'name acronym sport')
-      .populate('organizationId', 'name acronym')
-      .populate('userId', 'email username profile')
+      .populate('team', 'name abbreviation sport')
+      .populate('organization', 'name')
       .populate('createdBy', 'email username')
       .exec();
   }
@@ -32,9 +31,8 @@ export class PlayersRepository {
   ): Promise<PlayerDocument | null> {
     return this.playerModel
       .findOne({ ...filter, isDeleted: false })
-      .populate('currentTeamId', 'name acronym sport')
-      .populate('organizationId', 'name acronym')
-      .populate('userId', 'email username profile')
+      .populate('team', 'name abbreviation sport')
+      .populate('organization', 'name')
       .populate('createdBy', 'email username')
       .exec();
   }
@@ -57,16 +55,12 @@ export class PlayersRepository {
       .sort(sort)
       .skip(skip)
       .limit(limit);
-
-    if (select) {
-      query = query.select(select);
-    }
+    if (select) query = query.select(select);
 
     const [data, total] = await Promise.all([
       query
-        .populate('currentTeamId', 'name acronym')
-        .populate('organizationId', 'name acronym')
-        .populate('userId', 'email username')
+        .populate('team', 'name abbreviation')
+        .populate('organization', 'name')
         .exec(),
       this.playerModel.countDocuments(baseFilter).exec(),
     ]);
@@ -74,15 +68,11 @@ export class PlayersRepository {
     return { data, total };
   }
 
-  async update(
-    id: string,
-    update: any, // Allows MongoDB operators like $set, $unset, $push, $pull
-  ): Promise<PlayerDocument | null> {
+  async update(id: string, update: any): Promise<PlayerDocument | null> {
     return this.playerModel
       .findOneAndUpdate({ _id: id, isDeleted: false }, update, { new: true })
-      .populate('currentTeamId', 'name acronym sport')
-      .populate('organizationId', 'name acronym')
-      .populate('userId', 'email username profile')
+      .populate('team', 'name abbreviation sport')
+      .populate('organization', 'name')
       .populate('createdBy', 'email username')
       .exec();
   }
@@ -188,23 +178,19 @@ export class PlayersRepository {
   async findByTeam(teamId: string): Promise<PlayerDocument[]> {
     return this.playerModel
       .find({
-        currentTeamId: new Types.ObjectId(teamId),
+        team: new Types.ObjectId(teamId),
         isDeleted: false,
         status: PlayerStatus.ACTIVE,
       })
-      .populate('userId', 'email username profile')
-      .sort({ jerseyNumber: 1 })
+      .populate('organization', 'name')
+      .sort({ number: 1 })
       .exec();
   }
 
   async findByOrganization(orgId: string): Promise<PlayerDocument[]> {
     return this.playerModel
-      .find({
-        organizationId: new Types.ObjectId(orgId),
-        isDeleted: false,
-      })
-      .populate('currentTeamId', 'name acronym')
-      .populate('userId', 'email username')
+      .find({ organization: new Types.ObjectId(orgId), isDeleted: false })
+      .populate('team', 'name abbreviation')
       .sort({ createdAt: -1 })
       .exec();
   }

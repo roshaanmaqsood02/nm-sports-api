@@ -23,7 +23,7 @@ export interface FindManyOptions<T> {
 export abstract class BaseRepository<TDocument extends Document> {
   constructor(protected readonly model: Model<TDocument>) {}
 
-  // ── Create ────────────────────────────────────────────────────
+  // Create
   async create(data: Partial<TDocument>): Promise<TDocument> {
     return new this.model(data).save() as Promise<TDocument>;
   }
@@ -32,7 +32,7 @@ export abstract class BaseRepository<TDocument extends Document> {
     return this.model.insertMany(data) as unknown as TDocument[];
   }
 
-  // ── Find ──────────────────────────────────────────────────────
+  // Find
   async findById(
     id: string,
     populate?: PopulateOptions | PopulateOptions[],
@@ -40,8 +40,6 @@ export abstract class BaseRepository<TDocument extends Document> {
   ): Promise<TDocument | null> {
     if (!Types.ObjectId.isValid(id)) return null;
 
-    // FIX 1: cast to any to avoid Mongoose generic inference mismatch
-    // when chaining .populate() and .select() on findOne queries
     let query: any = this.model.findOne({
       _id: this.toObjectId(id),
       isDeleted: false,
@@ -79,9 +77,6 @@ export abstract class BaseRepository<TDocument extends Document> {
 
     const skip = (page - 1) * limit;
     const base = { ...filter, isDeleted: false };
-
-    // FIX 2: cast to any for the same reason — chaining select/populate/lean
-    // causes Mongoose's internal Query generic to diverge from TDocument
     let query: any = this.model.find(base).sort(sort).skip(skip).limit(limit);
 
     if (populate) query = query.populate(populate);
@@ -111,7 +106,7 @@ export abstract class BaseRepository<TDocument extends Document> {
     return query.exec() as Promise<TDocument[]>;
   }
 
-  // ── Update ────────────────────────────────────────────────────
+  // Update
   async updateById(
     id: string,
     update: UpdateQuery<TDocument>,
@@ -147,7 +142,7 @@ export abstract class BaseRepository<TDocument extends Document> {
     return result.modifiedCount;
   }
 
-  // ── Delete ────────────────────────────────────────────────────
+  // Delete
   async softDelete(id: string): Promise<TDocument | null> {
     if (!Types.ObjectId.isValid(id)) return null;
 
@@ -170,7 +165,7 @@ export abstract class BaseRepository<TDocument extends Document> {
     return result.deletedCount ?? 0;
   }
 
-  // ── Exists / Count ────────────────────────────────────────────
+  // Exists / Count
   async exists(filter: Filter<TDocument>): Promise<boolean> {
     return !!(await this.model.exists({ ...filter, isDeleted: false }));
   }
@@ -179,12 +174,12 @@ export abstract class BaseRepository<TDocument extends Document> {
     return this.model.countDocuments({ ...filter, isDeleted: false }).exec();
   }
 
-  // ── Aggregate ─────────────────────────────────────────────────
+  // Aggregate
   async aggregate(pipeline: any[]): Promise<any[]> {
     return this.model.aggregate(pipeline).exec();
   }
 
-  // ── Helpers ───────────────────────────────────────────────────
+  // Helpers
   toObjectId(id: string): Types.ObjectId {
     if (!Types.ObjectId.isValid(id)) {
       throw new Error(`Invalid ObjectId: "${id}"`);
@@ -192,9 +187,6 @@ export abstract class BaseRepository<TDocument extends Document> {
     return new Types.ObjectId(id);
   }
 
-  // FIX 3: return type changed from Filter<TDocument> to Record<string, any>
-  // because $or uses MongoDB operator keys that are not keyof TDocument —
-  // Filter<T> requires at least one key to be from T which $or never satisfies
   buildSearchFilter(
     searchFields: string[],
     query: string,

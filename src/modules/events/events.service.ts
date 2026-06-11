@@ -19,7 +19,6 @@ export class EventsService {
 
   constructor(private readonly repo: EventsRepository) {}
 
-  // ── Create ────────────────────────────────────────────────────
   async create(dto: CreateEventDto, user: RequestUser): Promise<EventDocument> {
     const event = await this.repo.create({
       eventName: dto.eventName,
@@ -62,11 +61,10 @@ export class EventsService {
       createdBy: user._id as any,
     });
 
-    this.logger.log(`✅ Event created: "${event.eventName}" by ${user.email}`);
+    this.logger.log(`Event created: "${event.eventName}" by ${user.email}`);
     return event;
   }
 
-  // ── Find All ──────────────────────────────────────────────────
   async findAll(
     page = 1,
     limit = 10,
@@ -76,7 +74,7 @@ export class EventsService {
       teamId?: string;
       status?: string;
       eventType?: string;
-      isAllDay?: string;
+      isAllDay?: boolean;
       startDate?: string;
       endDate?: string;
       search?: string;
@@ -94,8 +92,7 @@ export class EventsService {
       filter['teamIds'] = this.repo.toObjectId(filters.teamId);
     if (filters.status) filter['status'] = filters.status;
     if (filters.eventType) filter['eventType'] = filters.eventType;
-    if (filters.isAllDay !== undefined)
-      filter['isAllDay'] = filters.isAllDay === 'true';
+    if (filters.isAllDay !== undefined) filter['isAllDay'] = filters.isAllDay;
 
     if (filters.startDate || filters.endDate) {
       filter['date'] = {};
@@ -126,14 +123,12 @@ export class EventsService {
     });
   }
 
-  // ── Find One ──────────────────────────────────────────────────
   async findOne(id: string, user: RequestUser): Promise<EventDocument> {
     const event = await this.repo.findByIdPopulated(id);
     if (!event) throw new NotFoundException(`Event ${id} not found`);
     return event;
   }
 
-  // ── Find by Team ──────────────────────────────────────────────
   async findByTeam(
     teamId: string,
     user: RequestUser,
@@ -141,7 +136,6 @@ export class EventsService {
     return this.repo.findByTeam(teamId);
   }
 
-  // ── Update ────────────────────────────────────────────────────
   async update(
     id: string,
     dto: UpdateEventDto,
@@ -211,7 +205,6 @@ export class EventsService {
     return updated!;
   }
 
-  // ── Update Status ─────────────────────────────────────────────
   async updateStatus(
     id: string,
     status: EventStatus,
@@ -223,7 +216,6 @@ export class EventsService {
     return (await this.repo.updateById(id, { $set: { status } }))!;
   }
 
-  // ── Team management ───────────────────────────────────────────
   async addTeam(
     id: string,
     teamId: string,
@@ -248,7 +240,6 @@ export class EventsService {
     return (await this.repo.removeTeam(id, teamId, teamName))!;
   }
 
-  // ── Delete ────────────────────────────────────────────────────
   async remove(id: string, user: RequestUser): Promise<{ message: string }> {
     const event = await this.repo.findByIdPopulated(id);
     if (!event) throw new NotFoundException(`Event ${id} not found`);
@@ -257,7 +248,6 @@ export class EventsService {
     return { message: 'Event deleted successfully' };
   }
 
-  // ── Stats ─────────────────────────────────────────────────────
   async getStats(organizationId: string) {
     const base = { organizationId: this.repo.toObjectId(organizationId) };
     const [total, upcoming, completed, cancelled] = await Promise.all([
@@ -273,7 +263,7 @@ export class EventsService {
     return { total, upcoming, completed, cancelled };
   }
 
-  // ── Helpers ───────────────────────────────────────────────────
+  // Helpers
   private buildFullAddress(venue: any): string {
     return [venue.name, venue.street, venue.city, venue.state, venue.country]
       .filter(Boolean)

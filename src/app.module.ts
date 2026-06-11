@@ -17,7 +17,7 @@ import { configValidationSchema } from './config/config.validation';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LoggerModule } from './modules/logger/logger.module';
-import { UploadModule } from './common/upload/upload.module';
+import { UploadModule } from './modules/upload/upload.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { RolesModule } from './modules/roles/roles.module';

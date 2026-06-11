@@ -8,12 +8,17 @@ import {
 } from '@nestjs/common';
 import { OrganizationsRepository } from './organizations.repository';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
-import { UploadService } from 'src/common/upload/upload.service';
+import { UploadService } from 'src/modules/upload/upload.service';
 import { UpdateOrganizationDto } from './dto/update-organization';
 import { Types } from 'mongoose';
 import { RequestUser } from '../auth/interfaces/jwt-payload.interface';
 import { UserRole } from '../users/enums/user.enum';
 import { OrganizationDocument } from './schemas/organization.schema';
+import {
+  OrganizationQueryDto,
+  MemberQueryDto,
+  OrganizationStatsQueryDto,
+} from './dto/organization-query.dto';
 
 @Injectable()
 export class OrganizationsService {
@@ -27,7 +32,6 @@ export class OrganizationsService {
   private toPlain(doc: OrganizationDocument): Record<string, any> {
     const plain = doc.toObject({ virtuals: true, versionKey: false });
     delete plain.__v;
-    // Convert _id to string explicitly
     plain.id = plain._id?.toString();
     return JSON.parse(JSON.stringify(plain));
   }
@@ -62,7 +66,7 @@ export class OrganizationsService {
     let logo;
     if (logoFile) {
       logo = await this.uploadService.processLogo(logoFile);
-      console.log('Processed logo:', logo); // ← add this
+      console.log('Processed logo:', logo);
     }
     const org = await this.orgsRepository.create({
       name: dto.name,
@@ -104,12 +108,19 @@ export class OrganizationsService {
     return this.toPlain(org);
   }
 
-  async findAll(
-    page = 1,
-    limit = 10,
-    search?: string,
-    currentUser?: RequestUser,
-  ) {
+  async findAll(query: OrganizationQueryDto, currentUser: RequestUser) {
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      status,
+      sport,
+      city,
+      country,
+      gender,
+      createdBy,
+    } = query;
+
     const filter: any = {};
 
     if (currentUser && !currentUser.isSuperAdmin) {
@@ -123,6 +134,30 @@ export class OrganizationsService {
         { 'location.city': { $regex: search, $options: 'i' } },
         { 'location.country': { $regex: search, $options: 'i' } },
       ];
+    }
+
+    if (status) {
+      filter['status'] = status;
+    }
+
+    if (sport) {
+      filter['sports'] = { $in: [sport] };
+    }
+
+    if (city) {
+      filter['location.city'] = { $regex: city, $options: 'i' };
+    }
+
+    if (country) {
+      filter['location.country'] = { $regex: country, $options: 'i' };
+    }
+
+    if (gender) {
+      filter['gender'] = gender;
+    }
+
+    if (createdBy) {
+      filter['createdBy'] = new Types.ObjectId(createdBy);
     }
 
     const { data, total } = await this.orgsRepository.findMany(filter, {
@@ -149,6 +184,24 @@ export class OrganizationsService {
 
     this.checkAccess(org, currentUser);
     return this.toPlain(org);
+  }
+
+  async getMembers(
+    orgId: string,
+    query: MemberQueryDto,
+    currentUser: RequestUser,
+  ) {
+    const org = await this.orgsRepository.findById(orgId);
+    if (!org) throw new NotFoundException(`Organization ${orgId} not found`);
+
+    this.checkAccess(org, currentUser);
+
+    // This would need to be implemented in repository
+    // For now, return basic member info
+    return {
+      members: org.members,
+      count: org.members?.length || 0,
+    };
   }
 
   async update(
@@ -279,18 +332,36 @@ export class OrganizationsService {
     return { message: 'Member removed successfully' };
   }
 
-  async getStats(currentUser: RequestUser) {
-    const filter = currentUser.isSuperAdmin
+  async getStats(query: OrganizationStatsQueryDto, currentUser: RequestUser) {
+    const filter: any = currentUser.isSuperAdmin
       ? {}
       : { createdBy: currentUser._id };
 
-    const [total, active, pending] = await Promise.all([
+    // Add date range if provided
+    if (query.startDate || query.endDate) {
+      filter['createdAt'] = {};
+      if (query.startDate)
+        filter['createdAt']['$gte'] = new Date(query.startDate);
+      if (query.endDate) filter['createdAt']['$lte'] = new Date(query.endDate);
+    }
+
+    const [total, active, pending, suspended, archived] = await Promise.all([
       this.orgsRepository.count(filter),
       this.orgsRepository.count({ ...filter, status: 'active' }),
       this.orgsRepository.count({ ...filter, status: 'pending' }),
+      this.orgsRepository.count({ ...filter, status: 'suspended' }),
+      this.orgsRepository.count({ ...filter, status: 'archived' }),
     ]);
 
-    return { total, active, pending };
+    const stats = { total, active, pending, suspended, archived };
+
+    // Add grouping if specified
+    if (query.groupBy && query.startDate && query.endDate) {
+      // This would require aggregation pipeline
+      // For now, return basic stats
+    }
+
+    return stats;
   }
 
   async findById(id: string): Promise<OrganizationDocument | null> {

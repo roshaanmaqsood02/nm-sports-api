@@ -413,7 +413,7 @@ export const ALL_PERMISSION_DEFINITIONS: PermissionDefinition[] = [
     group: 'Matches',
   },
 
-  // ── Tournaments
+  // Tournaments
   {
     resource: 'tournaments',
     action: 'create',

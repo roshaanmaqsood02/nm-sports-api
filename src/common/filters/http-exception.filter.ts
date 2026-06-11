@@ -10,7 +10,7 @@ import { AppLoggerService } from 'src/modules/logger/logger.service';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  // ─── LoggerService is injected — no longer uses NestJS Logger ──
+  // LoggerService is injected — no longer uses NestJS Logger
   constructor(private readonly logger: AppLoggerService) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {

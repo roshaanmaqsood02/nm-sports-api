@@ -74,7 +74,6 @@ export class EmailChannel {
     }
   }
 
-  // ─── Build HTML from notification type + data ─────────────────
   private buildHtml(notification: NotificationDocument): string {
     const data = notification.data ?? {};
     const name = data.recipientName ?? data.name ?? 'User';

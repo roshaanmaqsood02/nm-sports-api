@@ -45,7 +45,7 @@ export class Player {
   team!: Types.ObjectId;
 
   @Prop({ type: [String], required: true })
-  positions!: string[]; // e.g., ['Opening Batsman', 'Wicket Keeper']
+  positions!: string[];
 
   @Prop({ min: 0, max: 999 })
   number?: number;

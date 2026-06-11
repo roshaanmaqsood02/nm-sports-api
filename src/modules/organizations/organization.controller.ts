@@ -19,9 +19,9 @@ import {
   ApiConsumes,
   ApiOperation,
   ApiParam,
-  ApiQuery,
   ApiResponse,
   ApiTags,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { OrganizationsService } from './organizations.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
@@ -29,6 +29,11 @@ import {
   OrganizationResponseDto,
   PaginatedOrganizationsDto,
 } from './dto/organization-response.dto';
+import {
+  OrganizationQueryDto,
+  MemberQueryDto,
+  OrganizationStatsQueryDto,
+} from './dto/organization-query.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { RequirePermissions } from '../auth/decorators/permissions.decorator';
 import type { RequestUser } from '../auth/interfaces/jwt-payload.interface';
@@ -39,7 +44,7 @@ import {
   imageFileFilter,
   logoStorage,
   MAX_FILE_SIZE,
-} from 'src/common/upload/multer.config';
+} from 'src/modules/upload/multer.config';
 import { UpdateOrganizationDto } from './dto/update-organization';
 
 @ApiTags('Organizations')
@@ -49,7 +54,6 @@ import { UpdateOrganizationDto } from './dto/update-organization';
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
-  // POST /organizations
   @Post()
   @RequirePermissions('organizations:create')
   @HttpCode(HttpStatus.CREATED)
@@ -118,32 +122,27 @@ export class OrganizationsController {
     return this.organizationsService.create(dto, user, logoFile);
   }
 
-  // GET /organizations
   @Get()
   @RequirePermissions('organizations:read')
-  @ApiOperation({ summary: 'List organizations (paginated)' })
-  @ApiQuery({ name: 'page', required: false, example: 1 })
-  @ApiQuery({ name: 'limit', required: false, example: 10 })
-  @ApiQuery({ name: 'search', required: false })
+  @ApiOperation({ summary: 'List organizations (paginated with filters)' })
   @ApiResponse({ status: 200, type: PaginatedOrganizationsDto })
   findAll(
     @CurrentUser() user: RequestUser,
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-    @Query('search') search?: string,
+    @Query() query: OrganizationQueryDto,
   ) {
-    return this.organizationsService.findAll(+page, +limit, search, user);
+    return this.organizationsService.findAll(query, user);
   }
 
-  // GET /organizations/stats
   @Get('stats')
   @RequirePermissions('organizations:read')
   @ApiOperation({ summary: 'Organization statistics' })
-  getStats(@CurrentUser() user: RequestUser) {
-    return this.organizationsService.getStats(user);
+  getStats(
+    @CurrentUser() user: RequestUser,
+    @Query() query: OrganizationStatsQueryDto,
+  ) {
+    return this.organizationsService.getStats(query, user);
   }
 
-  // GET /organizations/:id
   @Get(':id')
   @RequirePermissions('sports:read')
   @ApiOperation({ summary: 'Get organization by ID' })
@@ -153,7 +152,18 @@ export class OrganizationsController {
     return this.organizationsService.findOne(id, user);
   }
 
-  // PATCH /organizations/:id
+  @Get(':id/members')
+  @RequirePermissions('organizations:read')
+  @ApiOperation({ summary: 'Get organization members with pagination' })
+  @ApiParam({ name: 'id' })
+  getMembers(
+    @Param('id') id: string,
+    @Query() query: MemberQueryDto,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.organizationsService.getMembers(id, query, user);
+  }
+
   @Patch(':id')
   @RequirePermissions('organizations:update')
   @UseInterceptors(
@@ -182,7 +192,6 @@ export class OrganizationsController {
     return this.organizationsService.update(id, dto, user, logoFile);
   }
 
-  // DELETE /organizations/:id/logo
   @Delete(':id/logo')
   @RequirePermissions('organizations:update')
   @ApiOperation({ summary: 'Remove organization logo' })
@@ -191,7 +200,6 @@ export class OrganizationsController {
     return this.organizationsService.removeLogo(id, user);
   }
 
-  // POST /organizations/:id/members/:userId
   @Post(':id/members/:userId')
   @RequirePermissions('organizations:update')
   @HttpCode(HttpStatus.OK)
@@ -206,7 +214,6 @@ export class OrganizationsController {
     return this.organizationsService.addMember(id, userId, user);
   }
 
-  // DELETE /organizations/:id/members/:userId
   @Delete(':id/members/:userId')
   @RequirePermissions('organizations:update')
   @ApiOperation({ summary: 'Remove a member from an organization' })
@@ -220,7 +227,6 @@ export class OrganizationsController {
     return this.organizationsService.removeMember(id, userId, user);
   }
 
-  // DELETE /organizations/:id
   @Delete(':id')
   @AuditLog({
     action: AuditAction.ORGANIZATION_DELETED,

@@ -44,7 +44,7 @@ export class PushChannel {
       }
 
       this.firebaseAdmin = admin;
-      this.logger.log('✅ Firebase push initialized');
+      this.logger.log('Firebase push initialized');
     } catch (err: any) {
       this.logger.error(`Firebase init failed: ${err?.message}`);
     }

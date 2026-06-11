@@ -28,7 +28,7 @@ import {
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { RequirePermissions } from '../auth/decorators/permissions.decorator';
 import type { RequestUser } from '../auth/interfaces/jwt-payload.interface';
-import { CoachStatus, CoachRole } from './enums/coach.enum';
+import { QueryCoachDto } from './dto/query-coach.dto';
 
 @ApiTags('Coaches')
 @ApiBearerAuth('JWT-auth')
@@ -56,29 +56,20 @@ export class CoachesController {
   @RequirePermissions('teams:read')
   @ApiOperation({ summary: 'List all coaches in an organization' })
   @ApiParam({ name: 'organizationId' })
-  @ApiQuery({ name: 'page', required: false, example: 1 })
-  @ApiQuery({ name: 'limit', required: false, example: 10 })
-  @ApiQuery({ name: 'teamId', required: false, description: 'Filter by team' })
-  @ApiQuery({ name: 'status', required: false, enum: CoachStatus })
-  @ApiQuery({ name: 'coachRole', required: false, enum: CoachRole })
-  @ApiQuery({ name: 'search', required: false })
   @ApiResponse({ status: 200, type: PaginatedCoachesDto })
   findAll(
     @Param('organizationId') organizationId: string,
     @CurrentUser() user: RequestUser,
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-    @Query('teamId') teamId?: string,
-    @Query('status') status?: string,
-    @Query('coachRole') coachRole?: string,
-    @Query('search') search?: string,
+    @Query() query: QueryCoachDto,
   ) {
-    return this.coachesService.findAll(organizationId, +page, +limit, user, {
-      teamId,
-      status,
-      coachRole,
-      search,
-    });
+    const { page, limit, ...filters } = query;
+    return this.coachesService.findAll(
+      organizationId,
+      page,
+      limit,
+      user,
+      filters,
+    );
   }
 
   @Get('stats')

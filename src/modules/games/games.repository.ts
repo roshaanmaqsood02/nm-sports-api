@@ -13,7 +13,6 @@ export class GamesRepository extends BaseRepository<GameDocument> {
     super(gameModel);
   }
 
-  // ── Find with common populations ─────────────────────────────
   async findByIdPopulated(id: string): Promise<GameDocument | null> {
     return this.findById(id, [
       { path: 'organizationId', select: 'name acronym' },
@@ -23,7 +22,6 @@ export class GamesRepository extends BaseRepository<GameDocument> {
     ]);
   }
 
-  // ── Find upcoming games for a team ────────────────────────────
   async findUpcomingForTeam(teamId: string): Promise<GameDocument[]> {
     return this.findAll(
       {
@@ -35,7 +33,6 @@ export class GamesRepository extends BaseRepository<GameDocument> {
     );
   }
 
-  // ── Find games in a date range ────────────────────────────────
   async findInDateRange(
     organizationId: string,
     startDate: Date,
@@ -47,7 +44,6 @@ export class GamesRepository extends BaseRepository<GameDocument> {
     });
   }
 
-  // ── Add opponent ──────────────────────────────────────────────
   async addOpponent(
     gameId: string,
     opponent: Record<string, any>,
@@ -57,7 +53,6 @@ export class GamesRepository extends BaseRepository<GameDocument> {
     });
   }
 
-  // ── Remove opponent ───────────────────────────────────────────
   async removeOpponent(
     gameId: string,
     opponentId: string,
@@ -67,7 +62,6 @@ export class GamesRepository extends BaseRepository<GameDocument> {
     });
   }
 
-  // ── Update score ──────────────────────────────────────────────
   async updateScore(
     gameId: string,
     homeScore: number,

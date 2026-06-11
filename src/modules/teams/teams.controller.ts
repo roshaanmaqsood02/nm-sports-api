@@ -36,7 +36,7 @@ import {
   logoStorage,
   imageFileFilter,
   MAX_FILE_SIZE,
-} from '../../common/upload/multer.config';
+} from '../upload/multer.config';
 import { SportType } from '../organizations/enums/organization.enum';
 import { TeamGender, TeamType, TeamStatus } from './enums/team.enum';
 import type { RequestUser } from '../auth/interfaces/jwt-payload.interface';

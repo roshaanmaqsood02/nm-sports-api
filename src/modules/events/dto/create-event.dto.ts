@@ -22,7 +22,6 @@ import {
   RepeatFrequency,
 } from '../enums/event.enum';
 
-// ─── Nested DTOs ──────────────────────────────────────────────────────────────
 export class EventVenueDto {
   @ApiProperty({ example: 'NMSports Arena' })
   @IsString()
@@ -146,9 +145,7 @@ export class EventTeamDetailDto {
   notes?: string;
 }
 
-// ─── Main Create DTO ──────────────────────────────────────────────────────────
 export class CreateEventDto {
-  // ── Identity ─────────────────────────────────────────────────
   @ApiProperty({ example: 'Pre-Season Training Camp' })
   @IsString()
   @IsNotEmpty()
@@ -170,13 +167,11 @@ export class CreateEventDto {
   @MaxLength(2000)
   description?: string;
 
-  // ── Organization ─────────────────────────────────────────────
   @ApiProperty({ example: '64abc123def456' })
   @IsMongoId()
   @IsNotEmpty()
   organizationId!: string;
 
-  // ── Teams ─────────────────────────────────────────────────────
   @ApiPropertyOptional({
     example: ['64abc123def457', '64abc123def458'],
     description: 'Team IDs attached to this event',
@@ -192,18 +187,15 @@ export class CreateEventDto {
   @IsString({ each: true })
   teamNames?: string[];
 
-  // ── Venue ─────────────────────────────────────────────────────
   @ApiProperty({ type: () => EventVenueDto })
   @ValidateNested()
   @Type(() => EventVenueDto)
   venue!: EventVenueDto;
 
-  // ── All Day ───────────────────────────────────────────────────
   @ApiProperty({ example: false, description: 'Is this an all-day event?' })
   @IsBoolean()
   isAllDay!: boolean;
 
-  // ── Date & Time ───────────────────────────────────────────────
   @ApiProperty({
     example: '2025-06-15',
     description: 'Event date (YYYY-MM-DD)',
@@ -235,21 +227,18 @@ export class CreateEventDto {
   @MaxLength(50)
   timezone!: string;
 
-  // ── Repeat ───────────────────────────────────────────────────
   @ApiPropertyOptional({ type: () => RepeatConfigDto })
   @IsOptional()
   @ValidateNested()
   @Type(() => RepeatConfigDto)
   repeat?: RepeatConfigDto;
 
-  // ── Team Details ──────────────────────────────────────────────
   @ApiPropertyOptional({ type: () => EventTeamDetailDto })
   @IsOptional()
   @ValidateNested()
   @Type(() => EventTeamDetailDto)
   teamDetail?: EventTeamDetailDto;
 
-  // ── Status & Visibility ───────────────────────────────────────
   @ApiPropertyOptional({ enum: EventStatus, default: EventStatus.UPCOMING })
   @IsOptional()
   @IsEnum(EventStatus)

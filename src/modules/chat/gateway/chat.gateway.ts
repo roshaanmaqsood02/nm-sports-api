@@ -244,7 +244,7 @@ export class ChatGateway
       .emit(SocketEvent.MESSAGE_UPDATED, updated);
   }
 
-  // Helper: emit to specific user across all their sockets ──
+  // Helper: emit to specific user across all their sockets
   emitToUser(userId: string, event: string, data: any) {
     this.server.to(`user:${userId}`).emit(event, data);
   }

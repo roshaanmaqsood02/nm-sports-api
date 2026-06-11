@@ -98,7 +98,7 @@ export class FinancialService {
     });
 
     this.logger.log(
-      `✅ Invoice created: ${invoiceNumber} (${saleNumber}) by ${user.email}`,
+      `Invoice created: ${invoiceNumber} (${saleNumber}) by ${user.email}`,
     );
     return invoice;
   }
@@ -293,7 +293,7 @@ export class FinancialService {
       createdBy: user._id as any,
     });
 
-    this.logger.log(`✅ Sale item created: "${item.name}" by ${user.email}`);
+    this.logger.log(`Sale item created: "${item.name}" by ${user.email}`);
     return item;
   }
 
@@ -415,7 +415,7 @@ export class FinancialService {
       createdBy: user._id as any,
     });
 
-    this.logger.log(`✅ Payment term created: "${term.name}" by ${user.email}`);
+    this.logger.log(`Payment term created: "${term.name}" by ${user.email}`);
     return term;
   }
 
@@ -509,10 +509,6 @@ export class FinancialService {
     return { message: 'Payment term deleted successfully' };
   }
 
-  // ══════════════════════════════════════════════════════════════
-  // TRANSACTIONS
-  // ══════════════════════════════════════════════════════════════
-
   async createTransaction(dto: CreateTransactionDto, user: RequestUser) {
     const tx = await this.txRepo.create({
       organizationId: this.txRepo.toObjectId(dto.organizationId),
@@ -539,7 +535,7 @@ export class FinancialService {
     });
 
     this.logger.log(
-      `✅ Transaction created: ${tx.transactionId} by ${user.email}`,
+      `Transaction created: ${tx.transactionId} by ${user.email}`,
     );
     return tx;
   }

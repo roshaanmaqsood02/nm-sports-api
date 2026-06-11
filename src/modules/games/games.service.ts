@@ -1,3 +1,4 @@
+// games.service.ts (updated)
 import {
   BadRequestException,
   ForbiddenException,
@@ -13,6 +14,7 @@ import {
   AddOpponentDto,
   UpdateGameScoreDto,
 } from './dto/update-game.dto';
+import { GameQueryDto, GameStatsQueryDto } from './dto/game-query.dto';
 import { GameDocument } from './schemas/game.schema';
 import { GameStatus } from './enums/game.enum';
 import { RequestUser } from '../auth/interfaces/jwt-payload.interface';
@@ -24,7 +26,6 @@ export class GamesService {
 
   constructor(private readonly repo: GamesRepository) {}
 
-  // ── Create ────────────────────────────────────────────────────
   async create(dto: CreateGameDto, user: RequestUser): Promise<GameDocument> {
     const game = await this.repo.create({
       name: dto.name,
@@ -64,54 +65,50 @@ export class GamesService {
       createdBy: user._id as any,
     });
 
-    this.logger.log(`✅ Game created: "${game.name}" by ${user.email}`);
+    this.logger.log(`Game created: "${game.name}" by ${user.email}`);
     return game;
   }
 
-  // ── Find All ──────────────────────────────────────────────────
-  async findAll(
-    page = 1,
-    limit = 10,
-    user: RequestUser,
-    filters: {
-      organizationId?: string;
-      teamId?: string;
-      status?: string;
-      gameType?: string;
-      season?: string;
-      leagueId?: string;
-      startDate?: string;
-      endDate?: string;
-      search?: string;
-    } = {},
-  ) {
+  async findAll(query: GameQueryDto, user: RequestUser) {
+    const {
+      page = 1,
+      limit = 10,
+      organizationId,
+      teamId,
+      status,
+      gameType,
+      season,
+      leagueId,
+      startDate,
+      endDate,
+      search,
+    } = query;
+
     const filter: Record<string, any> = {};
 
     if (!user.isSuperAdmin && user.role !== UserRole.ADMIN) {
       filter['createdBy'] = this.repo.toObjectId(user._id);
     }
-    if (filters.organizationId)
-      filter['organizationId'] = this.repo.toObjectId(filters.organizationId);
-    if (filters.teamId) filter['teamId'] = this.repo.toObjectId(filters.teamId);
-    if (filters.status) filter['status'] = filters.status;
-    if (filters.gameType) filter['gameType'] = filters.gameType;
-    if (filters.season) filter['season'] = filters.season;
-    if (filters.leagueId)
-      filter['leagueId'] = this.repo.toObjectId(filters.leagueId);
+    if (organizationId)
+      filter['organizationId'] = this.repo.toObjectId(organizationId);
+    if (teamId) filter['teamId'] = this.repo.toObjectId(teamId);
+    if (status) filter['status'] = status;
+    if (gameType) filter['gameType'] = gameType;
+    if (season) filter['season'] = season;
+    if (leagueId) filter['leagueId'] = this.repo.toObjectId(leagueId);
 
-    if (filters.startDate || filters.endDate) {
+    if (startDate || endDate) {
       filter['date'] = {};
-      if (filters.startDate)
-        filter['date']['$gte'] = new Date(filters.startDate);
-      if (filters.endDate) filter['date']['$lte'] = new Date(filters.endDate);
+      if (startDate) filter['date']['$gte'] = new Date(startDate);
+      if (endDate) filter['date']['$lte'] = new Date(endDate);
     }
 
-    if (filters.search) {
+    if (search) {
       Object.assign(
         filter,
         this.repo.buildSearchFilter(
           ['name', 'teamName', 'leagueName', 'venue.name', 'venue.city'],
-          filters.search,
+          search,
         ),
       );
     }
@@ -128,14 +125,12 @@ export class GamesService {
     });
   }
 
-  // ── Find One ──────────────────────────────────────────────────
   async findOne(id: string, user: RequestUser): Promise<GameDocument> {
     const game = await this.repo.findByIdPopulated(id);
     if (!game) throw new NotFoundException(`Game ${id} not found`);
     return game;
   }
 
-  // ── Update ────────────────────────────────────────────────────
   async update(
     id: string,
     dto: UpdateGameDto,
@@ -199,7 +194,6 @@ export class GamesService {
     return updated!;
   }
 
-  // ── Status transitions ────────────────────────────────────────
   async updateStatus(
     id: string,
     status: GameStatus,
@@ -213,7 +207,6 @@ export class GamesService {
     return updated!;
   }
 
-  // ── Score update ──────────────────────────────────────────────
   async updateScore(
     id: string,
     dto: UpdateGameScoreDto,
@@ -231,7 +224,6 @@ export class GamesService {
     return updated!;
   }
 
-  // ── Opponent management ───────────────────────────────────────
   async addOpponent(
     id: string,
     dto: AddOpponentDto,
@@ -258,7 +250,6 @@ export class GamesService {
     return updated!;
   }
 
-  // ── Delete ────────────────────────────────────────────────────
   async remove(id: string, user: RequestUser): Promise<{ message: string }> {
     const game = await this.repo.findByIdPopulated(id);
     if (!game) throw new NotFoundException(`Game ${id} not found`);
@@ -269,9 +260,19 @@ export class GamesService {
     return { message: 'Game deleted successfully' };
   }
 
-  // ── Stats ─────────────────────────────────────────────────────
-  async getStats(organizationId: string, user: RequestUser) {
-    const base = { organizationId: this.repo.toObjectId(organizationId) };
+  async getStats(
+    organizationId: string,
+    query: GameStatsQueryDto,
+    user: RequestUser,
+  ) {
+    const base: any = { organizationId: this.repo.toObjectId(organizationId) };
+
+    // Add date range filter if provided
+    if (query.startDate || query.endDate) {
+      base['date'] = {};
+      if (query.startDate) base['date']['$gte'] = new Date(query.startDate);
+      if (query.endDate) base['date']['$lte'] = new Date(query.endDate);
+    }
 
     const [total, scheduled, completed, cancelled, upcoming] =
       await Promise.all([
@@ -289,7 +290,7 @@ export class GamesService {
     return { total, scheduled, completed, cancelled, upcoming };
   }
 
-  // ── Helpers ───────────────────────────────────────────────────
+  // Helpers
   private buildDisplayTime(time: any): string {
     if (!time?.startTime) return '';
     const parts = [time.startTime];

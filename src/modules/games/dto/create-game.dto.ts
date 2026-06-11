@@ -16,7 +16,6 @@ import {
 import { Transform, Type } from 'class-transformer';
 import { GameStatus, GameType, GameVisibility } from '../enums/game.enum';
 
-// ─── Nested DTOs ──────────────────────────────────────────────────────────────
 export class GameVenueDto {
   @ApiProperty({ example: 'Sinclair Community College' })
   @IsString()
@@ -151,9 +150,7 @@ export class GameOpponentDto {
   notes?: string;
 }
 
-// ─── Main Create DTO ──────────────────────────────────────────────────────────
 export class CreateGameDto {
-  // ── Identity ─────────────────────────────────────────────────
   @ApiProperty({ example: 'Spring Championship — Game 5' })
   @IsString()
   @IsNotEmpty()
@@ -162,7 +159,6 @@ export class CreateGameDto {
   @Transform(({ value }) => value?.trim())
   name!: string;
 
-  // ── Context ───────────────────────────────────────────────────
   @ApiProperty({ example: '64abc123def456' })
   @IsMongoId()
   @IsNotEmpty()
@@ -179,30 +175,25 @@ export class CreateGameDto {
   @MaxLength(100)
   teamName?: string;
 
-  // ── Date ─────────────────────────────────────────────────────
   @ApiProperty({ example: '2025-04-15', description: 'Game date (YYYY-MM-DD)' })
   @IsDateString()
   date!: string;
 
-  // ── Time ─────────────────────────────────────────────────────
   @ApiProperty({ type: () => GameTimeDto })
   @ValidateNested()
   @Type(() => GameTimeDto)
   time!: GameTimeDto;
 
-  // ── Venue ─────────────────────────────────────────────────────
   @ApiProperty({ type: () => GameVenueDto })
   @ValidateNested()
   @Type(() => GameVenueDto)
   venue!: GameVenueDto;
 
-  // ── Game Type ─────────────────────────────────────────────────
   @ApiPropertyOptional({ enum: GameType, default: GameType.HOME })
   @IsOptional()
   @IsEnum(GameType)
   gameType?: GameType;
 
-  // ── Opponents ─────────────────────────────────────────────────
   @ApiPropertyOptional({
     type: [GameOpponentDto],
     description: 'Add one or more opponents',
@@ -213,7 +204,6 @@ export class CreateGameDto {
   @Type(() => GameOpponentDto)
   opponents?: GameOpponentDto[];
 
-  // ── Status ───────────────────────────────────────────────────
   @ApiPropertyOptional({
     enum: GameStatus,
     default: GameStatus.SCHEDULED,
@@ -224,7 +214,6 @@ export class CreateGameDto {
   @IsEnum(GameStatus)
   status?: GameStatus;
 
-  // ── Team Details ──────────────────────────────────────────────
   @ApiPropertyOptional({
     example: '2:30 PM',
     description: 'Arrival time (optional)',
@@ -252,7 +241,6 @@ export class CreateGameDto {
   @MaxLength(2000)
   notes?: string;
 
-  // ── Season / League ───────────────────────────────────────────
   @ApiPropertyOptional({ example: '2024-25' })
   @IsOptional()
   @IsString()
@@ -275,7 +263,6 @@ export class CreateGameDto {
   @IsEnum(GameVisibility)
   visibility?: GameVisibility;
 
-  // ── Scores ───────────────────────────────────────────────────
   @ApiPropertyOptional({ example: 0 })
   @IsOptional()
   @IsInt()

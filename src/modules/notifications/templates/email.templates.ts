@@ -71,10 +71,10 @@ export const EmailTemplates = {
       <hr class="divider">
       <div class="info-box">
         <p style="font-weight:600; margin-bottom:8px;">Getting Started</p>
-        <p>✅ Create or join an organization</p>
-        <p>✅ Add your teams and players</p>
-        <p>✅ Schedule matches and tournaments</p>
-        <p>✅ Track stats and standings</p>
+        <p>Create or join an organization</p>
+        <p>Add your teams and players</p>
+        <p>Schedule matches and tournaments</p>
+        <p>Track stats and standings</p>
       </div>
       ${data.loginUrl ? `<a href="${data.loginUrl}" class="btn">Go to Dashboard →</a>` : ''}
     `,
@@ -245,7 +245,7 @@ export const EmailTemplates = {
   }) =>
     layout(
       `
-      <p class="greeting">Registration Received ✅</p>
+      <p class="greeting">Registration Received</p>
       <p class="message">
         Hi <strong>${data.name}</strong>, we have received your registration for
         <strong>${data.orgName}</strong>.
